@@ -1,0 +1,676 @@
+\documentclass[11pt]{article}
+
+\usepackage[margin=1in]{geometry}
+\usepackage{amsmath,amssymb,amsthm}
+\usepackage{booktabs}
+\usepackage{microtype}
+\usepackage{hyperref}
+\usepackage{tikz}
+
+\hypersetup{
+    colorlinks=true,
+    linkcolor=blue,
+    citecolor=blue,
+    urlcolor=blue
+}
+
+\theoremstyle{plain}
+\newtheorem{theorem}{Theorem}[section]
+\newtheorem{lemma}[theorem]{Lemma}
+\newtheorem{proposition}[theorem]{Proposition}
+\newtheorem{corollary}[theorem]{Corollary}
+
+\theoremstyle{definition}
+\newtheorem{definition}[theorem]{Definition}
+
+\theoremstyle{remark}
+\newtheorem{remark}[theorem]{Remark}
+
+\title{A Constructive N-Series Acceleration Law\\
+for Polygonal Approximation of $\pi$}
+\author{Wayne Baker\\
+\small Independent Research, Newfoundland, Canada}
+\date{July 3, 2026}
+
+\begin{document}
+
+\maketitle
+
+\begin{abstract}
+Classical polygonal approximation of $\pi$ produces sequences whose leading error is of order $N^{-2}$. For the standard inscribed regular polygon half-perimeter
+\[
+P_N=N\sin\left(\frac{\pi}{N}\right),
+\]
+the error expansion contains only even powers of $N^{-1}$. This symmetry-induced structure permits an exact cross-scale cancellation of the leading term. For any integer $k>1$, the two-scale N-series operator
+\[
+\widehat P_N^{(k)}
+=
+P_{kN}+\frac{P_{kN}-P_N}{k^2-1}
+\]
+satisfies
+\[
+\widehat P_N^{(k)}=\pi+O(N^{-4}).
+\]
+More generally, multi-scale operators cancel successive even-power terms and produce higher-order convergence. Algebraically this is a Richardson-type extrapolation; the aim of this note is expository and geometric. We make explicit how the even-power hypothesis that makes such extrapolation exact is not imposed externally but is induced by the chord symmetry of the polygonal construction itself, and we trace the resulting acceleration law from the two-scale operator through a general moment-cancellation hierarchy, together with the precise sense in which the construction remains constructible. The contribution is thus neither a new value of $\pi$ nor a modification of the Archimedean limit.  Rather, the aim is to isolate the geometric source of the even-power hypothesis and to present the resulting finite-resolution
+acceleration law in polygonal terms.
+\end{abstract}
+
+\section{Introduction}
+
+Archimedes' polygon method approximates the circumference of a circle by
+regular polygons \cite{archimedes-heath}. In the normalized half-perimeter convention used here, the inscribed regular polygon sequence is
+\[
+P_N=N\sin\left(\frac{\pi}{N}\right),
+\]
+and
+\[
+\lim_{N\to\infty}P_N=\pi.
+\]
+The classical refinement view improves accuracy by increasing $N$. Since the leading error is proportional to $N^{-2}$, replacing $N$ by $2N$ reduces the leading error by a factor of $4$.
+
+The observation developed in this paper is that the polygonal sequence contains more structure than refinement alone reveals. Its error expansion is an even-power expansion in $N^{-1}$. Once this structure is recognized, approximations at different scales can be combined so that the leading error term cancels exactly.
+
+The resulting N-series operator is algebraically the same kind of leading-term cancellation used in Richardson-type extrapolation
+\cite{richardson,stoer-bulirsch}. The geometric point is that the required even-power structure is not imposed externally; it is induced by the symmetry of the underlying chord construction. Thus the operator can be interpreted as intrinsic to the polygonal approximation sequence itself.
+
+\begin{center}
+\emph{Symmetry creates the expansion; scaling exposes it; the operator removes the leading error.}
+\end{center}
+
+\section{The polygonal even-power expansion}
+
+\begin{definition}[Polygonal half-perimeter sequence]
+For $N\geq 3$, define
+\[
+P_N=N\sin\left(\frac{\pi}{N}\right).
+\]
+This is the half-perimeter of the inscribed regular $N$-gon in the unit circle. Equivalently, it is the usual inscribed polygon perimeter divided by $2$.
+\end{definition}
+
+\begin{lemma}[Even-power expansion]
+The sequence $P_N$ admits the asymptotic expansion
+\[
+P_N
+=
+\pi
+-
+\frac{\pi^3}{6N^2}
++
+\frac{\pi^5}{120N^4}
+-
+\frac{\pi^7}{5040N^6}
++
+O(N^{-8}).
+\]
+In particular, only even powers of $N^{-1}$ occur.
+\end{lemma}
+
+\begin{proof}
+Using
+\[
+\sin x=x-\frac{x^3}{6}+\frac{x^5}{120}-\frac{x^7}{5040}+O(x^9)
+\]
+and substituting $x=\pi/N$, we obtain
+\[
+\sin\left(\frac{\pi}{N}\right)
+=
+\frac{\pi}{N}
+-
+\frac{\pi^3}{6N^3}
++
+\frac{\pi^5}{120N^5}
+-
+\frac{\pi^7}{5040N^7}
++
+O(N^{-9}).
+\]
+Multiplying by $N$ gives the claimed expansion.
+\end{proof}
+
+\begin{remark}[Full perimeter convention]
+If one uses the full perimeter
+\[
+\mathcal P_N=2N\sin\left(\frac{\pi}{N}\right),
+\]
+then the same results hold after replacing the limit $\pi$ by $2\pi$. The present paper uses the half-perimeter convention because it keeps the limiting value equal to $\pi$.
+\end{remark}
+
+\section{The two-scale N-series operator}
+
+The basic acceleration law applies to any approximation sequence with an even-power expansion. The polygonal case is then obtained by taking $Q_N=P_N$.
+
+\begin{theorem}[Two-scale N-series acceleration]
+\label{thm:two-scale}
+Let $\{Q_N\}$ be an approximation sequence satisfying
+\[
+Q_N
+=
+Q+\frac{C_2}{N^2}+\frac{C_4}{N^4}+O(N^{-6}).
+\]
+For an integer $k>1$, define
+\[
+\widehat Q_N^{(k)}
+:=
+Q_{kN}+\frac{Q_{kN}-Q_N}{k^2-1}.
+\]
+Then
+\[
+\widehat Q_N^{(k)}=Q+O(N^{-4}).
+\]
+Thus the entire $N^{-2}$ term is cancelled exactly.
+\end{theorem}
+
+\begin{proof}
+Substituting $kN$ into the expansion gives
+\[
+Q_{kN}
+=
+Q+\frac{C_2}{k^2N^2}+\frac{C_4}{k^4N^4}+O(N^{-6}).
+\]
+Hence
+\[
+Q_{kN}-Q_N
+=
+C_2\left(\frac{1}{k^2}-1\right)\frac{1}{N^2}
++
+C_4\left(\frac{1}{k^4}-1\right)\frac{1}{N^4}
++
+O(N^{-6}).
+\]
+Dividing by $k^2-1$ gives
+\[
+\frac{Q_{kN}-Q_N}{k^2-1}
+=
+-\frac{C_2}{k^2N^2}
+-
+\frac{C_4(k^2+1)}{k^4N^4}
++
+O(N^{-6}).
+\]
+Therefore
+\[
+\widehat Q_N^{(k)}
+=
+Q
++
+\left(\frac{C_2}{k^2N^2}-\frac{C_2}{k^2N^2}\right)
++
+O(N^{-4})
+=
+Q+O(N^{-4}).
+\]
+\end{proof}
+
+\begin{corollary}[Polygonal acceleration]
+\label{cor:polygon-two-scale}
+For
+\[
+P_N=N\sin\left(\frac{\pi}{N}\right),
+\]
+define
+\[
+\widehat P_N^{(k)}
+=
+P_{kN}+\frac{P_{kN}-P_N}{k^2-1}.
+\]
+Then
+\[
+\widehat P_N^{(k)}=\pi+O(N^{-4}).
+\]
+More precisely,
+\[
+\widehat P_N^{(k)}
+=
+\pi-
+\frac{\pi^5}{120k^2N^4}
++O(N^{-6}).
+\]
+\end{corollary}
+
+\begin{proof}
+Apply Theorem~\ref{thm:two-scale} with
+\[
+Q=\pi,
+\qquad
+C_2=-\frac{\pi^3}{6},
+\qquad
+C_4=\frac{\pi^5}{120}.
+\]
+The $N^{-4}$ coefficient after acceleration is $-C_4/k^2$, giving the displayed formula.
+\end{proof}
+
+\section{The accelerated geometric limit}
+
+\begin{definition}[Accelerated polygonal limit]
+For fixed $k>1$, define
+\[
+\pi_g^{(k)}:=\lim_{N\to\infty}\widehat P_N^{(k)},
+\]
+whenever the limit exists.
+\end{definition}
+
+\begin{theorem}[Equality of the accelerated and classical limits]
+\label{thm:pi-g-equals-pi}
+For every fixed integer $k>1$,
+\[
+\pi_g^{(k)}=\pi.
+\]
+\end{theorem}
+
+\begin{proof}
+By Corollary~\ref{cor:polygon-two-scale},
+\[
+\widehat P_N^{(k)}=\pi+O(N^{-4}).
+\]
+Taking $N\to\infty$ gives the result.
+\end{proof}
+
+\begin{remark}[No redefinition of $\pi$]
+The N-series operator does not define a new constant. It preserves the Archimedean limit and changes only the finite-resolution error structure of the approximating sequence.
+\end{remark}
+
+\section{Refinement versus cancellation}
+
+Classical polygonal approximation improves accuracy through refinement: replace $N$ by a larger scale such as $2N$. The N-series operator adds a second operation: compare two scales and cancel the leading asymptotic defect.
+
+\begin{figure}[h]
+\centering
+\begin{tikzpicture}[scale=0.95, every node/.style={font=\small}]
+    \draw[thick] (-5,0) rectangle (-1,3.8);
+    \node at (-3,3.35) {\textbf{Classical scheme}};
+    \node at (-3,2.75) {refinement only};
+    \node at (-3,2.0) {$P_N$};
+    \draw[->, thick] (-3,1.75) -- (-3,1.15);
+    \node at (-3,0.9) {$P_{2N}$};
+    \draw[->, thick] (-3,0.65) -- (-3,0.05);
+    \node at (-3,-0.25) {$\pi$ in the limit};
+    \node[align=center] at (-3,1.42) {$N^{-2}$ error\\shrinks by scale};
+
+    \draw[thick] (1,0) rectangle (7,3.8);
+    \node at (4,3.35) {\textbf{N-series scheme}};
+    \node at (4,2.75) {refinement + cancellation};
+    \node at (2.35,2.05) {$P_N$};
+    \node at (5.65,2.05) {$P_{kN}$};
+    \draw[->, thick] (2.75,1.95) -- (5.15,1.95);
+    \draw[->, thick] (2.75,1.75) -- (3.65,1.05);
+    \draw[->, thick] (5.25,1.75) -- (4.35,1.05);
+    \node[draw, rounded corners, align=center, inner sep=4pt] at (4,0.85)
+    {$\displaystyle \widehat P_N^{(k)}=P_{kN}+\frac{P_{kN}-P_N}{k^2-1}$};
+    \draw[->, thick] (4,0.45) -- (4,-0.1);
+    \node at (4,-0.35) {$\pi$ in the limit};
+    \node[align=center] at (4,1.48) {exact cancellation\\of the $N^{-2}$ term};
+\end{tikzpicture}
+\caption{Refinement versus cancellation. Classical polygonal approximation improves accuracy by increasing $N$. The N-series operator combines two scales so that the leading $N^{-2}$ term cancels exactly.}
+\label{fig:refinement-vs-cancellation}
+\end{figure}
+
+The distinction is structural. Refinement reduces the leading error term by making it smaller; cancellation removes that term from the accelerated sequence.
+
+\section{Three-scale acceleration}
+
+The same idea extends to higher order by combining more scales. The next case cancels both the $N^{-2}$ and $N^{-4}$ terms.
+
+\begin{theorem}[Three-scale N-series acceleration]
+\label{thm:three-scale}
+Suppose
+\[
+Q_N
+=
+Q+C_2N^{-2}+C_4N^{-4}+C_6N^{-6}+O(N^{-8}).
+\]
+Fix an integer $k>1$ and define
+\[
+\widehat Q_N^{(k,3)}
+=
+aQ_N+bQ_{kN}+cQ_{k^2N},
+\]
+where
+\[
+a=\frac{1}{(k^2-1)^2(k^2+1)},
+\qquad
+b=-\frac{k^2}{(k^2-1)^2},
+\qquad
+c=\frac{k^6}{(k^2-1)^2(k^2+1)}.
+\]
+Then
+\[
+\widehat Q_N^{(k,3)}=Q+O(N^{-6}).
+\]
+Thus the $N^{-2}$ and $N^{-4}$ terms are both cancelled exactly.
+\end{theorem}
+
+\begin{proof}
+Substituting the expansion at the three scales gives
+\[
+\begin{aligned}
+\widehat Q_N^{(k,3)}
+&=
+(a+b+c)Q \\
+&\quad+
+\left(a+\frac{b}{k^2}+\frac{c}{k^4}\right)C_2N^{-2} \\
+&\quad+
+\left(a+\frac{b}{k^4}+\frac{c}{k^8}\right)C_4N^{-4}
++O(N^{-6}).
+\end{aligned}
+\]
+The displayed coefficients satisfy
+\[
+a+b+c=1,
+\qquad
+a+\frac{b}{k^2}+\frac{c}{k^4}=0,
+\qquad
+a+\frac{b}{k^4}+\frac{c}{k^8}=0.
+\]
+Therefore the limit term is preserved and the first two even-power errors vanish.
+\end{proof}
+
+\begin{corollary}[The dyadic three-scale operator]
+For $k=2$,
+\[
+\widehat Q_N^{(2,3)}
+=
+\frac{1}{45}Q_N-
+\frac{4}{9}Q_{2N}+\frac{64}{45}Q_{4N},
+\]
+and
+\[
+\widehat Q_N^{(2,3)}=Q+O(N^{-6}).
+\]
+\end{corollary}
+
+\section{General moment-cancellation form}
+
+The two-scale and three-scale operators are the first members of a general hierarchy.
+
+\begin{theorem}[General N-series moment cancellation]
+\label{thm:general-moment}
+Let
+\[
+Q_N=Q+\sum_{j=1}^{r-1}C_{2j}N^{-2j}+O(N^{-2r})
+\]
+and let $m_1,\ldots,m_r$ be distinct positive scale factors. Choose weights $w_1,\ldots,w_r$ satisfying
+\[
+\sum_{i=1}^r w_i=1,
+\qquad
+\sum_{i=1}^r \frac{w_i}{m_i^{2j}}=0
+\quad (j=1,\ldots,r-1).
+\]
+Then
+\[
+Q_N^{[r]}:=\sum_{i=1}^r w_i Q_{m_iN}
+\]
+satisfies
+\[
+Q_N^{[r]}=Q+O(N^{-2r}).
+\]
+\end{theorem}
+
+\begin{proof}
+Substitute the expansion of \(Q_{m_iN}\) into the weighted sum.  The condition
+\[
+\sum_i w_i=1
+\]
+preserves the limiting value \(Q\).  The moment conditions eliminate the
+coefficients of
+\[
+N^{-2},\quad N^{-4},\quad \ldots,\quad N^{-2(r-1)}.
+\]
+The first possible remaining term is therefore \(O(N^{-2r})\).
+\end{proof}
+
+\begin{remark}[Vandermonde structure]
+The coefficient equations form a Vandermonde-type linear system in the variables $m_i^{-2}$. Since the scale factors are distinct, the system is nonsingular and the weights are uniquely determined.
+\end{remark}
+
+\section{Constructibility and scope}
+
+The word ``constructive'' is used here in the following finite-resolution sense. If the approximants $Q_N,Q_{kN},\ldots$ are available within a given geometric construction scheme, then the N-series operator uses only field operations on those constructed quantities. Since constructible lengths form a field, the weighted combinations appearing above remain constructible within that algebraic framework.
+
+For the exact classical straightedge-and-compass construction of regular polygons, not every integer scale is available from an arbitrary starting polygon. The dyadic case $k=2$ is the classical Archimedean refinement. Other scale choices, such as $k=3$, should be interpreted either as formal scale laws for the polygonal sequence or as acceleration laws applied within a separate approximate subdivision mechanism. The present theorem does not claim exact straightedge-and-compass construction of every regular $kN$-gon.
+
+Thus the scope of the paper is precise:
+\begin{itemize}
+\item the limiting value remains the classical $\pi$;
+\item the polygonal even-power expansion supplies the structural input;
+\item the N-series operator cancels leading error terms exactly at the sequence level;
+\item constructibility is inherited whenever the required scale approximants are themselves available in the chosen geometric framework.
+\end{itemize}
+
+\section{Numerical illustration}
+
+For $k=2$, the accelerated sequence is
+\[
+\widehat P_N^{(2)}=P_{2N}+\frac{P_{2N}-P_N}{3}.
+\]
+The following values illustrate the reduction from second-order to fourth-order error. Values are rounded decimal evaluations of the exact formulas above.
+
+\begin{center}
+\begin{tabular}{rrrr}
+\toprule
+$N$ & $P_N$ & $|\pi-P_N|$ & $|\pi-\widehat P_N^{(2)}|$ \\
+\midrule
+$6$  & $2.9999999999999996$ & $1.4159265358979356\times10^{-1}$ & $4.879319494612844\times10^{-4}$ \\
+$12$ & $3.1058285412302490$ & $3.576411235954424\times10^{-2}$ & $3.068295822572509\times10^{-5}$ \\
+$24$ & $3.1326286132812378$ & $8.964040308555354\times10^{-3}$ & $1.9206210501998555\times10^{-6}$ \\
+$48$ & $3.1393502030468667$ & $2.2424505429263775\times10^{-3}$ & $1.2008473637692418\times10^{-7}$ \\
+$96$ & $3.1410319508905093$ & $5.60702699283766\times10^{-4}$ & $7.506014032543362\times10^{-9}$ \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+The fourth column decreases by approximately a factor of $16$ when $N$ doubles, consistent with the $O(N^{-4})$ theorem.
+
+\section{A \texorpdfstring{\(\pi\)-free}{pi-free} computational verification}
+\label{sec:pi-free-verification}
+
+The numerical illustration above evaluates \(P_N\) through the sine function,
+which presupposes \(\pi\).  To confirm the acceleration on data generated
+geometrically, with no appeal to \(\pi\) at any stage, one may build the
+approximating polygons by repeated trisection.
+
+Starting from an algebraic chord seed, each refinement triples the side count
+by passing from an \(N\)-gon to a \(3N\)-gon.  Analytically one may write the
+stored quantity as
+\[
+c_N=\sin\left(\frac{\pi}{N}\right),
+\]
+but this formula is not used to generate the sequence.  The computation stores
+only chord half-lengths.  The new chord half-length is obtained as the small
+positive root of the algebraic chord-trisection equation
+\[
+4u^3-3u+c_N=0,
+\qquad
+u=c_{3N}.
+\]
+No transcendental constant enters the generation process: the seeds are
+algebraic and every subsequent length is obtained by solving a cubic over the
+previously constructed lengths.  The inscribed half-perimeter approximation is
+then
+\[
+P_N=Nc_N.
+\]
+The reference value of \(\pi\) is used only after the construction, to count
+the number of verified decimal digits.
+
+Applying the multi-scale operator with \(k=3\) to a ladder of trisection
+levels produces the measured accuracy shown in
+Table~\ref{tab:pi-free-verification}.  The raw column uses the
+triangle-seeded chord ladder; each accelerated value is verified against an
+independently computed reference.
+
+\begin{table}[h]
+\centering
+\begin{tabular}{ccc}
+\toprule
+Trisection levels \(L\) & Raw half-perimeter & Accelerated \(k=3\) N-series \\
+\midrule
+\(60\)  & \(57\) digits  & \(1{,}948\) digits \\
+\(95\)  & \(90\) digits  & \(4{,}705\) digits \\
+\(152\) & \(145\) digits & \(11{,}199\) digits \\
+\bottomrule
+\end{tabular}
+\caption{A \(\pi\)-free verification of the scale-\(3\) N-series acceleration.
+The polygonal data are generated by an algebraic chord-trisection recurrence;
+\(\pi\) is used only afterward to count verified digits.}
+\label{tab:pi-free-verification}
+\end{table}
+
+Two features are worth stating precisely.  First, the construction is genuinely
+\(\pi\)-free: the digits are produced by an algebraic trisection recurrence
+seeded by \(\sqrt{3}\), and \(\pi\) is used only afterward to count the correct
+digits.  Second, the operator is not a fixed-order scheme.  Each additional
+level raises the order of cancellation, so the order of convergence is
+unbounded and the number of correct digits grows quadratically in the number
+of levels, in contrast to the linear growth of raw Archimedean refinement and
+of any fixed-order accelerator.  In each run above, the attainable accuracy was
+limited only by the working arithmetic precision, not by the resolution of the
+geometry: the method is precision-limited, not resolution-limited.
+
+\paragraph{Independent implementation cross-check.}
+As an additional verification, the computation was performed by two independent
+\(\pi\)-free implementations.  One implementation used a triangle seed,
+\[
+c_3=\frac{\sqrt{3}}{2},
+\qquad
+3\to 9\to 27\to\cdots,
+\]
+while the second used a hexagon seed,
+\[
+c_6=\frac{1}{2},
+\qquad
+6\to 18\to 54\to\cdots.
+\]
+Both implementations advanced the polygon sequence by solving the algebraic
+chord-trisection equation
+\[
+4u^3-3u+c_N=0,
+\qquad
+u=c_{3N},
+\]
+and both applied the scale-\(3\) N-series acceleration tableau.  The two
+independently generated digit strings agreed through the first \(100{,}000\)
+decimal digits.
+
+In the hexagon-seeded run, the per-step trisection certificate reported
+maximum cubic residual below
+\[
+1.3\times 10^{-100126},
+\]
+with maximum derivative root-error bound below
+\[
+4.4\times 10^{-100127}.
+\]
+Thus the reported agreement is supported both by independent implementation
+agreement and by a full-precision certificate for the chord-trisection solves.
+
+\section{Relation to Richardson extrapolation}
+\label{sec:richardson}
+
+Algebraically, Theorem~\ref{thm:two-scale} is a Richardson-type cancellation
+of the leading error term \cite{richardson,stoer-bulirsch}.  The distinction
+made here is interpretive and geometric: the even-power expansion arises from
+the chord symmetry of the polygonal construction, and the cancellation
+operator acts directly on the resulting polygonal approximation sequence.
+
+The N-series framework therefore does not replace classical extrapolation
+theory.  Rather, it identifies a natural geometric source for the hypotheses
+that make such extrapolation exact at the asymptotic level.  In this sense the
+paper is expository: the algebraic cancellation is standard, while the
+geometric contribution is the isolation of the polygonal even-power structure
+and its finite-resolution interpretation.
+
+\section{Summary and conclusion}
+\label{sec:summary-conclusion}
+
+The polygonal approximation sequence
+\[
+P_N=N\sin\left(\frac{\pi}{N}\right)
+\]
+has an even-power error expansion:
+\[
+P_N
+=
+\pi
+-
+\frac{\pi^3}{6N^2}
++
+\frac{\pi^5}{120N^4}
+-
+\frac{\pi^7}{5040N^6}
++
+O(N^{-8}).
+\]
+This symmetry-induced structure permits exact cancellation of the leading
+term through the two-scale N-series operator
+\[
+\widehat P_N^{(k)}
+=
+P_{kN}+\frac{P_{kN}-P_N}{k^2-1}.
+\]
+For every fixed integer \(k>1\),
+\[
+\widehat P_N^{(k)}
+=
+\pi
++
+O(N^{-4}),
+\]
+and the accelerated geometric limit satisfies
+\[
+\pi_g^{(k)}=\pi.
+\]
+
+More generally, the same moment-cancellation principle produces a hierarchy
+of multi-scale operators that cancel successive even-power error terms.  The
+two-scale operator cancels the \(N^{-2}\) term, the three-scale operator
+cancels the \(N^{-2}\) and \(N^{-4}\) terms, and the general \(r\)-scale form
+cancels the first \(r-1\) even-power terms.
+
+The result does not alter the classical value of \(\pi\).  Instead, it gives a
+finite-resolution acceleration law for polygonal approximation: refinement
+decreases the leading error, while cross-scale cancellation removes that
+leading error from the accelerated sequence.
+
+The \(\pi\)-free computational verification shows that the acceleration can be
+tested on polygonal data generated algebraically from chord half-lengths,
+without using \(\pi\) in the construction of the sequence itself.  In that
+verification, \(\pi\) is used only afterward as an external reference to count
+verified digits.
+
+All cancellation formulas used in the polygonal case have been derived here
+directly from the even-power expansion of \(P_N\).  Thus the note is
+self-contained and does not require a broader companion framework.  Its
+purpose is not to claim a new extrapolation theory, but to give a geometric
+reading of a standard Richardson-type cancellation mechanism in the concrete
+setting of polygonal approximation.
+
+\begin{thebibliography}{9}
+
+\bibitem{archimedes-heath}
+Archimedes,
+\emph{Measurement of a Circle},
+in \emph{The Works of Archimedes}, edited by T.~L. Heath,
+Cambridge University Press, Cambridge, 1897.
+
+\bibitem{richardson}
+L.~F. Richardson,
+``The approximate arithmetical solution by finite differences of physical
+problems involving differential equations, with an application to the stresses
+in a masonry dam,''
+\emph{Philosophical Transactions of the Royal Society of London. Series A},
+210 (1911), 307--357.
+
+\bibitem{stoer-bulirsch}
+J.~Stoer and R.~Bulirsch,
+\emph{Introduction to Numerical Analysis}, 3rd ed.,
+Texts in Applied Mathematics, vol.~12,
+Springer, New York, 2002.
+
+\bibitem{baker-cascade}
+W.~Baker,
+\emph{A Constructive Cubic Error Cascade for Approximate Angle Trisection},
+working manuscript, 2026.
+
+\end{thebibliography}
+
+\end{document}

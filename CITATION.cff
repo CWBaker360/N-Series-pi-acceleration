@@ -1,0 +1,25 @@
+cff-version: 1.2.0
+message: "If you use or discuss this work, please cite it using the metadata below."
+title: "A Constructive N-Series Acceleration Law for Polygonal Approximation of π"
+type: article
+authors:
+  - family-names: Baker
+    given-names: Wayne
+date-released: 2026-07-03
+version: preprint-v1
+repository-code: "https://github.com/CWBaker360/nseries-pi-acceleration"
+url: "https://github.com/CWBaker360/nseries-pi-acceleration"
+abstract: >-
+  This paper gives a geometric interpretation of Richardson-type cancellation
+  for polygonal approximations of pi. It derives the even-power error structure,
+  proves two-scale and multi-scale cancellation laws, and records a pi-free
+  algebraic chord-trisection verification.
+keywords:
+  - polygonal approximation
+  - pi
+  - Richardson extrapolation
+  - N-series
+  - chord trisection
+  - constructive geometry
+  - asymptotic acceleration
+license: proprietary
