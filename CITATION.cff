@@ -1,25 +1,39 @@
 cff-version: 1.2.0
-message: "If you use or discuss this work, please cite it using the metadata below."
+message: "If you use or discuss this work, please cite the paper listed under preferred-citation."
 title: "A Constructive N-Series Acceleration Law for Polygonal Approximation of π"
-type: article
+type: software
+
 authors:
-  - family-names: Baker
-    given-names: Wayne
-date-released: 2026-07-03
-version: preprint-v1
-repository-code: "https://github.com/CWBaker360/nseries-pi-acceleration"
-url: "https://github.com/CWBaker360/nseries-pi-acceleration"
+  - family-names: "Baker"
+    given-names: "Wayne"
+
+version: "1.0.0"
+date-released: "2026-07-22"
+
+repository-code: "https://github.com/CWBaker360/N-Series-pi-acceleration"
+url: "https://github.com/CWBaker360/N-Series-pi-acceleration"
+
 abstract: >-
-  This paper gives a geometric interpretation of Richardson-type cancellation
-  for polygonal approximations of pi. It derives the even-power error structure,
-  proves two-scale and multi-scale cancellation laws, and records a pi-free
-  algebraic chord-trisection verification.
+  This repository contains the manuscript source and supporting materials for
+  a constructive N-Series acceleration law for polygonal approximation of pi.
+  The paper gives a geometric interpretation of Richardson-type cancellation,
+  derives the even-power error structure, proves two-scale and multiscale
+  cancellation laws, and records a pi-free algebraic chord-trisection
+  verification.
+
 keywords:
-  - polygonal approximation
-  - pi
-  - Richardson extrapolation
-  - N-series
-  - chord trisection
-  - constructive geometry
-  - asymptotic acceleration
-license: proprietary
+  - "polygonal approximation"
+  - "pi"
+  - "Richardson extrapolation"
+  - "N-series"
+  - "chord trisection"
+  - "constructive geometry"
+  - "asymptotic acceleration"
+
+preferred-citation:
+  type: article
+  title: "A Constructive N-Series Acceleration Law for Polygonal Approximation of π"
+  authors:
+    - family-names: "Baker"
+      given-names: "Wayne"
+  year: 2026
