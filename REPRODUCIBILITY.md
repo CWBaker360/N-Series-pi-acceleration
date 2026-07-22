@@ -2,26 +2,35 @@
 
 ## Paper compilation
 
-From the `paper` directory:
+The authoritative manuscript source is:
+
+```text
+paper/nseries_pi_acceleration.tex
+```
+
+Compile the manuscript by opening a terminal in the `paper` directory and running:
 
 ```bash
 pdflatex nseries_pi_acceleration.tex
 pdflatex nseries_pi_acceleration.tex
 ```
 
-The temporary LaTeX files may be deleted after the PDF is generated.
+The second pass resolves cross-references and page numbering. Temporary LaTeX
+files may be removed after the PDF has been generated.
 
 ## Python environment
 
-Recommended:
+Recommended environment:
 
 ```text
 Python 3.10 or later
 mpmath
-gmpy2 (strongly recommended for large targets)
+gmpy2
 ```
 
-Install dependencies with:
+The `gmpy2` package is strongly recommended for large target calculations.
+
+Install the dependencies using:
 
 ```bash
 python -m pip install mpmath gmpy2
@@ -29,44 +38,49 @@ python -m pip install mpmath gmpy2
 
 ## Configurable chord verification
 
-Example, 10,000 digits with the hexagon seed and certificate:
+From the repository root, run a 10,000-digit verification using the hexagon
+seed and derivative certificate:
 
-```bash
-python scripts/baker_chord_nseries.py ^
-  --target-digits 10000 ^
-  --seed hexagon ^
-  --certificate ^
-  --outdir outputs
+```powershell
+python scripts/baker_chord_nseries.py --target-digits 10000 --seed hexagon --certificate --outdir outputs
 ```
 
-Triangle-seed cross-check:
+For an independent triangle-seed cross-check, run:
 
-```bash
-python scripts/baker_chord_nseries.py ^
-  --target-digits 10000 ^
-  --seed triangle ^
-  --certificate ^
-  --outdir outputs_triangle
+```powershell
+python scripts/baker_chord_nseries.py --target-digits 10000 --seed triangle --certificate --outdir outputs_triangle
 ```
 
-The script uses no trigonometric functions in the construction core. `mp.pi` is used only to count verified digits.
+The construction core uses algebraic chord relations rather than
+trigonometric-function evaluations. The value `mp.pi` is used only afterward
+to count verified decimal digits.
 
 ## Large resumable production run
 
-Edit `TARGET_DIGITS` near the top of:
+Set `TARGET_DIGITS` near the beginning of:
 
 ```text
 scripts/baker_pi_target.py
 ```
 
-Then run:
+Then run, from the repository root:
 
-```bash
+```powershell
 python scripts/baker_pi_target.py
 ```
 
-The script writes an atomic checkpoint periodically and resumes automatically when restarted with the same target.
+The production script writes an atomic checkpoint periodically and resumes
+automatically when restarted with the same target configuration.
 
 ## Interpretation
 
-The numerical runs verify implementation behavior and decimal agreement. The theorem in the paper is proved analytically from the even-power expansion and moment-cancellation identities.
+The numerical runs verify implementation behavior and decimal agreement. They
+do not replace the analytic proof.
+
+The theorem in the manuscript is proved from the even-power asymptotic
+expansion and the associated moment-cancellation identities.
+
+## Integrity
+
+Run a SHA-256 verification against `SHA256SUMS.txt` after downloading or
+extracting the repository archive.
