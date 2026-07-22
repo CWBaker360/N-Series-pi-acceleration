@@ -10,10 +10,8 @@ This repository contains the paper, LaTeX source, and supporting Python scripts 
 
 ## Read the paper
 
-## Read the paper
-
-- [Read the paper (PDF)](Paper/nseries_pi_acceleration.pdf)
-- [LaTeX source](Paper/nseries_pi_acceleration.tex)
+- [Read the paper (PDF)](paper/nseries_pi_acceleration.pdf)
+- [LaTeX source](paper/nseries_pi_acceleration.tex)
 
 ## Main result
 
