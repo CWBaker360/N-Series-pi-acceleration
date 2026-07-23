@@ -12,7 +12,7 @@ This repository contains the paper, LaTeX source, and supporting Python scripts 
 
 - [Read the paper (PDF)](paper/nseries_pi_acceleration.pdf)
 - [LaTeX source](paper/nseries_pi_acceleration.tex)
-- [Version 1.0.0 release](https://github.com/CWBaker360/N-Series-pi-acceleration/releases/tag/v1.0.0)
+- [Latest release](https://github.com/CWBaker360/N-Series-pi-acceleration/releases/latest)
 
 ## Main result
 
@@ -108,13 +108,19 @@ even-power expansion and makes the cancellation exact at the asymptotic level.
 
 This paper is the third work in a three-paper research sequence:
 
-1. [A Constructible Cubic Error Cascade for Approximate Angle Trisection](https://github.com/CWBaker360/Constructible-Cubic-Trisection/releases/tag/v1.0.0)
-2. [A Local Cubic Refinement Law for Proportional-Subtended Angle Division](https://github.com/CWBaker360/proportional-subtended-cubic-refinement/releases/tag/v1.0.0)
-3. [A Constructive N-Series Acceleration Law for Polygonal Approximation of π](https://github.com/CWBaker360/N-Series-pi-acceleration/releases/tag/v1.0.0)
+1. [A Constructible Cubic Error Cascade for Approximate Angle Trisection](https://github.com/CWBaker360/Constructible-Cubic-Trisection/releases/latest)
+2. [A Local Cubic Refinement Law for Proportional-Subtended Angle Division](https://github.com/CWBaker360/proportional-subtended-cubic-refinement/releases/latest)
+3. [A Constructive N-Series Acceleration Law for Polygonal Approximation of π](https://github.com/CWBaker360/N-Series-pi-acceleration/releases/latest)
 
-The sequence progresses from a specific constructible approximation, through
-the general local cubic cancellation law, to higher-order acceleration of
-polygonal approximations.
+Together, the three papers develop the progression
+
+**constructible approximation → local cubic refinement → higher-order acceleration**.
+
+The first paper presents a specific constructible approximation and its cubic
+error cascade. The second derives the general proportional-subtended
+cancellation law and proves the uniqueness of the scaling that removes the
+linear residual term. The third applies structured asymptotic cancellation to
+accelerate polygonal approximations of π.
 
 ## Repository structure
 
@@ -123,6 +129,8 @@ polygonal approximations.
 ├── README.md
 ├── CITATION.cff
 ├── REPRODUCIBILITY.md
+├── LICENSE
+├── LICENSE-PAPER.md
 ├── LICENSE_NOTICE.md
 ├── CHANGELOG.md
 ├── SHA256SUMS.txt
@@ -160,4 +168,3 @@ For the detailed scope of each license, see
 [`LICENSE_NOTICE.md`](LICENSE_NOTICE.md).
 
 Copyright © 2026 Wayne Baker.
-Copyright © 2026 Wayne Baker. All rights reserved unless otherwise stated.
