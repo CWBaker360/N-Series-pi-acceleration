@@ -1,3 +1,9 @@
+<p align="center">
+  <img src="assets/Repo03_nseries-pi-acceleration.png"
+       alt="Infographic summarizing the constructive N-series acceleration law for polygonal approximation of pi"
+       width="760">
+</p>
+
 # A Constructive N-Series Acceleration Law for Polygonal Approximation of π
 
 **Author:** Wayne Baker  
