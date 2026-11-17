@@ -49,3 +49,10 @@ supplementary uppercase `REQUIREMENTS.txt` was not recovered; `requirements.txt`
 (the actual pinned Python dependency) is present. See `INDEPENDENT_REPRODUCTION.md`.
 This is not an end-to-end Lean proof of Theorem 6.1 or a physical straightedge-
 and-compass error-tolerance certificate. No manuscript files were replaced here.
+## November 15 manuscript update (main branch)
+
+The revised 25-page manuscript and matching LaTeX are in `paper/`. It distinguishes
+the algebraic R9 finite-value certificate, the separately frozen constructible
+ladder, and the parts of the analytical argument not formalized in Lean. The
+historical million-digit Chudnovsky reference software version is not known.
+No new Zenodo DOI or tagged release is implied by this source update.

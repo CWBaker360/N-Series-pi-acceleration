@@ -82,5 +82,27 @@ expansion and the associated moment-cancellation identities.
 
 ## Integrity
 
-Run a SHA-256 verification against `SHA256SUMS.txt` after downloading or
-extracting the repository archive.
+The legacy root `SHA256SUMS.txt` may reflect historical Windows line endings
+and does not cover the November verification directories. Do not treat it as a
+current fresh-clone certificate. The frozen Lean checkpoint has its own
+`FREEZE_MANIFEST.txt`, and the July Version 3.0 exact-rational verification
+package has `PACKAGE_MANIFEST.json` plus `INDEPENDENT_REPRODUCTION.md`.
+The latter preserves 15/16 original file hashes; the missing supplementary
+`REQUIREMENTS.txt` is documented, and the actual pinned dependency file is present.
+
+## November 2026 independently reproduced finite certificate
+
+From `verification/certified_richardson_v3_0` with Python 3.10+ and
+`mpmath==1.3.0` installed, run:
+
+```powershell
+python -m unittest -v test_certified_richardson.py
+python verify_pi_g_identities.py --output-dir output
+```
+
+This reproduces four unit tests and nine verification checks for the
+canonical eleven-input *algebraic* Richardson tableau, with a rigorous
+absolute error bound below `1e-80`. The constructible-ladder Lean evidence
+is a different, exact-operation statement. The historical million-digit
+Chudnovsky reference implementation/version has not been recovered, so that
+comparison is not claimed to be independently reproducible from this archive.

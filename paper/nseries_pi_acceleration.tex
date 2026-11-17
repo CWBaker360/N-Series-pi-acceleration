@@ -1,675 +1,1776 @@
-\documentclass[11pt]{article}
+\documentclass[12pt]{article}
 
 \usepackage[margin=1in]{geometry}
-\usepackage{amsmath,amssymb,amsthm}
+\usepackage{amsmath,amsthm,amssymb,mathtools}
 \usepackage{booktabs}
+\usepackage{array}
 \usepackage{microtype}
-\usepackage{hyperref}
-\usepackage{tikz}
+\usepackage{parskip}
+\usepackage{fancyhdr}
+\usepackage{titlesec}
+\usepackage[T1]{fontenc}
+\usepackage{lmodern}
+\usepackage[utf8]{inputenc}
+\usepackage[hidelinks]{hyperref}
 
-\hypersetup{
-    colorlinks=true,
-    linkcolor=blue,
-    citecolor=blue,
-    urlcolor=blue
-}
+% -----------------------------------------------------------
+% Header / footer
+% -----------------------------------------------------------
+\pagestyle{fancy}
+\fancyhf{}
+\lhead{\small N-Series Acceleration for Polygonal $\pi$}
+\rhead{\small Wayne Baker}
+\cfoot{\thepage}
+\setlength{\headheight}{14.5pt}
 
-\theoremstyle{plain}
+% -----------------------------------------------------------
+% Section formatting
+% -----------------------------------------------------------
+\titleformat{\section}
+  {\large\bfseries}{\thesection.}{0.5em}{}
+\titleformat{\subsection}
+  {\normalsize\bfseries}{\thesubsection.}{0.5em}{}
+
+% -----------------------------------------------------------
+% Theorem environments
+% -----------------------------------------------------------
 \newtheorem{theorem}{Theorem}[section]
-\newtheorem{lemma}[theorem]{Lemma}
 \newtheorem{proposition}[theorem]{Proposition}
+\newtheorem{lemma}[theorem]{Lemma}
 \newtheorem{corollary}[theorem]{Corollary}
-
 \theoremstyle{definition}
 \newtheorem{definition}[theorem]{Definition}
-
 \theoremstyle{remark}
 \newtheorem{remark}[theorem]{Remark}
 
-\title{A Constructive N-Series Acceleration Law\\
-for Polygonal Approximation of $\pi$}
-\author{Wayne Baker\\
-\small Independent Research, Newfoundland, Canada}
-\date{July 3, 2026}
+% -----------------------------------------------------------
+% Commands
+% -----------------------------------------------------------
+\newcommand{\Rop}{\mathcal{R}}
+\newcommand{\Rmulti}{\mathcal{E}}
+\newcommand{\abs}[1]{\left|#1\right|}
+\newcommand{\Order}{\mathcal{O}}
 
+% -----------------------------------------------------------
 \begin{document}
 
-\maketitle
-
-\begin{abstract}
-Classical polygonal approximation of $\pi$ produces sequences whose leading error is of order $N^{-2}$. For the standard inscribed regular polygon half-perimeter
-\[
-P_N=N\sin\left(\frac{\pi}{N}\right),
-\]
-the error expansion contains only even powers of $N^{-1}$. This symmetry-induced structure permits an exact cross-scale cancellation of the leading term. For any integer $k>1$, the two-scale N-series operator
-\[
-\widehat P_N^{(k)}
-=
-P_{kN}+\frac{P_{kN}-P_N}{k^2-1}
-\]
-satisfies
-\[
-\widehat P_N^{(k)}=\pi+O(N^{-4}).
-\]
-More generally, multi-scale operators cancel successive even-power terms and produce higher-order convergence. Algebraically this is a Richardson-type extrapolation; the aim of this note is expository and geometric. We make explicit how the even-power hypothesis that makes such extrapolation exact is not imposed externally but is induced by the chord symmetry of the polygonal construction itself, and we trace the resulting acceleration law from the two-scale operator through a general moment-cancellation hierarchy, together with the precise sense in which the construction remains constructible. The contribution is thus neither a new value of $\pi$ nor a modification of the Archimedean limit.  Rather, the aim is to isolate the geometric source of the even-power hypothesis and to present the resulting finite-resolution
-acceleration law in polygonal terms.
-\end{abstract}
-
-\section{Introduction}
-
-Archimedes' polygon method approximates the circumference of a circle by
-regular polygons \cite{archimedes-heath}. In the normalized half-perimeter convention used here, the inscribed regular polygon sequence is
-\[
-P_N=N\sin\left(\frac{\pi}{N}\right),
-\]
-and
-\[
-\lim_{N\to\infty}P_N=\pi.
-\]
-The classical refinement view improves accuracy by increasing $N$. Since the leading error is proportional to $N^{-2}$, replacing $N$ by $2N$ reduces the leading error by a factor of $4$.
-
-The observation developed in this paper is that the polygonal sequence contains more structure than refinement alone reveals. Its error expansion is an even-power expansion in $N^{-1}$. Once this structure is recognized, approximations at different scales can be combined so that the leading error term cancels exactly.
-
-The resulting N-series operator is algebraically the same kind of leading-term cancellation used in Richardson-type extrapolation
-\cite{richardson,stoer-bulirsch}. The geometric point is that the required even-power structure is not imposed externally; it is induced by the symmetry of the underlying chord construction. Thus the operator can be interpreted as intrinsic to the polygonal approximation sequence itself.
-
 \begin{center}
-\emph{Symmetry creates the expansion; scaling exposes it; the operator removes the leading error.}
+  {\LARGE\bfseries Certified Constructive N-Series Acceleration}\\[4pt]
+  {\LARGE\bfseries for Polygonal Approximation of $\pi$}\\[16pt]
+  {\large Wayne Baker}\\[3pt]
+  {\normalsize\itshape Independent Researcher, Newfoundland and Labrador, Canada}\\[3pt]
+  {\normalsize November 15, 2026}
 \end{center}
 
-\section{The polygonal even-power expansion}
-
-\begin{definition}[Polygonal half-perimeter sequence]
-For $N\geq 3$, define
+\begin{abstract}
+We study a tripling-based geometric refinement and scale-cancellation framework
+for Archimedean polygonal approximation of $\pi$.  For the normalized
+semiperimeter
 \[
-P_N=N\sin\left(\frac{\pi}{N}\right).
+  P_N=N\sin\!\left(\frac{\pi}{N}\right)
 \]
-This is the half-perimeter of the inscribed regular $N$-gon in the unit circle. Equivalently, it is the usual inscribed polygon perimeter divided by $2$.
+of the regular inscribed $N$-gon in the unit circle, the classical even-power
+expansion implies an error of order $N^{-2}$.  Consequently, raw tripling
+$N\mapsto 3N$ reduces the leading error asymptotically by a factor of $9$,
+whereas raw doubling reduces it by a factor of $4$.  After $k$ matched
+refinement stages, the asymptotic same-stage advantage is $(9/4)^k$; at
+$k=12$ the exact polygonal reference values differ by a factor of approximately
+$1.6834\times10^4$.
+
+The principal N-Series acceleration is not tripling alone.  It is the
+scale-cancellation operator
+\[
+  \Rop_m[P]_N=\frac{m^2P_{mN}-P_N}{m^2-1},
+\]
+which cancels the leading $N^{-2}$ term and yields fourth-order error.  For
+$m=3$, the asymptotic error reduction under one further tripling is therefore
+$3^4=81$, compared with $2^4=16$ for a fourth-order doubling sequence.  More
+general multiscale combinations cancel successive even-power error modes by
+standard Richardson--Romberg moment conditions.
+
+A separate analysis distinguishes three levels that were conflated in earlier
+accounts: the ideal regular-polygon sequence, a $\pi$-free algebraic chord
+recurrence, and a straightedge-and-compass approximate-trisection lane.  If
+$c_N=\sin(\pi/N)$, the triple-angle identity determines $c_{3N}$ as the
+smallest positive root of $4u^3-3u+c_N=0$; for $0<c_N<1$ the cubic has two
+positive roots, and the selected branch is the smaller.  This recurrence generates the polygonal data
+without inserting $\pi$, but a numerical cubic solve is not an exact Euclidean
+construction of the regular $18$-gon.  The constructible lane instead produces
+a finite chord approximation whose angular residual must be carried as a
+separate error term.  The resulting geometric limit, denoted $\pi_g$, equals
+$\pi$ because the underlying polygonal sequence converges to $\pi$ and the
+N-Series transformations preserve that limit.  Preserving the \emph{accelerated}
+fourth-order law along the constructible lane is a stronger requirement: we show
+that a fixed number of cubic refinements per tripling level does not suffice,
+because the refinement acts only on the fresh local defect and not on the
+inherited angular error, and we replace it with a target-dependent schedule
+whose exact-rational per-level budget is fixed in advance of the ladder.
+
+The finite canonical scale-$3$ computation is now accompanied by a rigorous,
+oracle-free error certificate.  Eleven polygon inputs are enclosed by exact
+rational cubic-root intervals, propagated through the complete Richardson
+tableau with exact rational weights, and combined with an analytic alternating-
+series remainder using only the rational inequality $\pi<22/7$.  For the
+specified $120$-decimal working-precision run, the resulting bound is
+\[
+  \abs{\widehat\pi_g-\pi}
+  <3.406285758314118\times10^{-81},
+\]
+which certifies at least $80$ decimal places of absolute accuracy.  A separate
+million-digit comparison with an independently generated Chudnovsky expansion
+remains a large-scale implementation test; it is not claimed as a million-digit
+formal enclosure.
+\end{abstract}
+
+% -----------------------------------------------------------
+\section{Introduction}
+
+Archimedean approximation of $\pi$ replaces the circle by regular inscribed and
+circumscribed polygons~\cite{archimedes}.  In the familiar doubling scheme, a regular hexagon is
+refined through
+\[
+  6,12,24,48,\ldots,
+\]
+and the leading perimeter error decreases by a factor approaching $4$ at each
+step.  A tripling schedule instead uses the scale sequence
+\[
+  6,18,54,162,\ldots,
+\]
+for which the corresponding leading-error factor approaches $9$.
+
+Two mathematically distinct mechanisms must be separated.
+
+First, \emph{raw scale refinement} replaces $N$ by $mN$.  If the leading error
+is proportional to $N^{-2}$, this operation reduces that term by $m^2$.
+Tripling is therefore stronger than doubling per refinement level, although it
+also increases the side count more rapidly.
+
+Second, \emph{scale cancellation} forms a weighted combination of approximants
+at two or more resolutions.  The weights are chosen to annihilate the leading
+terms in an even-power asymptotic expansion.  The two-scale operator used here
+is a Richardson extrapolation with scale ratio $m$; the term \emph{Baker
+N-Series} refers to its organization along geometric polygonal scale families,
+especially the tripling family $N,3N,9N,\ldots$, together with a finite
+constructible interpretation of the underlying chord stages.
+
+A further distinction is essential.  The analytic reference value
+$P_{18}=18\sin(\pi/18)$ belongs to an exact regular $18$-gon, which is not
+classically constructible.  The algebraic computational lane obtains its chord
+by selecting a root of a cubic, whereas Baker's geometric lane produces a
+straightedge-and-compass approximation to the required central angle.  Thus a
+publication-safe analysis must carry two errors:
+\[
+  \text{polygonal discretization error}
+  \quad\text{and}\quad
+  \text{constructive angular residual}.
+\]
+The first is governed by the even-power expansion; the second is governed by
+the local cubic refinement law developed in the companion trisection papers.
+
+The contributions of this paper are as follows:
+\begin{enumerate}
+  \item an exact comparison of raw doubling and tripling for the inscribed
+        polygonal sequence;
+  \item a fourth-order N-Series cancellation theorem and its multiscale
+        extension;
+  \item a $\pi$-free algebraic chord-tripling recurrence derived from the
+        triple-angle identity;
+  \item a perturbation estimate specifying how accurately the constructible
+        central angle must approximate the ideal angle, together with an
+        exact-rational refinement schedule that meets it;
+  \item a proof that the geometric limit $\pi_g$ equals $\pi$;
+  \item an exact-rational finite-value enclosure for the canonical eleven-input
+        scale-$3$ Richardson tableau;
+  \item numerical tables separating raw refinement, scale cancellation,
+        certified finite-value accuracy, and arbitrary-precision implementation
+        verification;
+  \item a precise statement of what the million-digit computation does and
+        does not establish.
+\end{enumerate}
+
+% -----------------------------------------------------------
+\section{The exact polygonal reference sequence}
+
+\subsection{Normalized semiperimeter}
+
+For a regular inscribed $N$-gon in the unit circle, the side length is
+$2\sin(\pi/N)$.  Its perimeter is therefore $2N\sin(\pi/N)$.  It is convenient
+to normalize by a factor of $2$ and define
+\begin{equation}
+  P_N:=N\sin\!\left(\frac{\pi}{N}\right).
+  \label{eq:PN}
+\end{equation}
+Then $P_N<\pi$ and $P_N\to\pi$ as $N\to\infty$.
+
+Expanding the sine function at the origin gives
+\begin{equation}
+\begin{aligned}
+  P_N
+  &=\pi-\frac{\pi^3}{6N^2}
+       +\frac{\pi^5}{120N^4}
+       -\frac{\pi^7}{5040N^6}
+       +\Order(N^{-8}).
+\end{aligned}
+\label{eq:PNexpansion}
+\end{equation}
+Hence the positive error
+\begin{equation}
+  E_N:=\pi-P_N
+  \label{eq:EN}
+\end{equation}
+satisfies
+\begin{equation}
+  E_N=\frac{\pi^3}{6N^2}
+      -\frac{\pi^5}{120N^4}
+      +\frac{\pi^7}{5040N^6}
+      +\Order(N^{-8}).
+  \label{eq:ENexpansion}
+\end{equation}
+
+\subsection{Raw scale refinement}
+
+\begin{theorem}[General raw scale law]
+Let
+\[
+  Q_N=L+cN^{-p}+o(N^{-p}),
+  \qquad c\ne0,\quad p>0.
+\]
+For every fixed scale factor $m>1$,
+\begin{equation}
+  \frac{Q_{mN}-L}{Q_N-L}\longrightarrow m^{-p}
+  \qquad (N\to\infty).
+  \label{eq:general-scale-law}
+\end{equation}
+Equivalently, the magnitude of the leading error is reduced asymptotically by
+the factor $m^p$.
+\end{theorem}
+
+\begin{proof}
+From the assumed expansion,
+\[
+  Q_{mN}-L=c(mN)^{-p}+o(N^{-p})
+          =cm^{-p}N^{-p}+o(N^{-p}).
+\]
+Division by $Q_N-L=cN^{-p}+o(N^{-p})$ gives
+\eqref{eq:general-scale-law}.
+\end{proof}
+
+Applying the theorem to \eqref{eq:ENexpansion} with $p=2$ gives the following.
+
+\begin{corollary}[Doubling versus tripling]
+For the inscribed-polygon error $E_N$,
+\[
+  \frac{E_{2N}}{E_N}\longrightarrow\frac14,
+  \qquad
+  \frac{E_{3N}}{E_N}\longrightarrow\frac19.
+\]
+Thus raw doubling reduces the leading error by a factor of $4$, whereas raw
+tripling reduces it by a factor of $9$.
+\end{corollary}
+
+If both schedules begin from the same $N_0$ and are compared after $k$ matched
+refinement stages, then
+\begin{equation}
+  \frac{E_{2^kN_0}}{E_{3^kN_0}}
+  \sim\left(\frac{3}{2}\right)^{2k}
+  =\left(\frac94\right)^k.
+  \label{eq:same-stage-ratio}
+\end{equation}
+At $k=12$,
+\[
+  \left(\frac94\right)^{12}
+  =16834.112196028232\ldots.
+\]
+This is a same-stage error comparison, not a wall-clock speedup claim.
+
+\begin{remark}[Digits gained per raw scale level]
+For an $N^{-2}$ error law, doubling gains asymptotically
+\[
+  \log_{10}(4)=0.6020599913279624\ldots
+\]
+decimal digits per level, whereas tripling gains
+\[
+  \log_{10}(9)=0.9542425094393249\ldots.
+\]
+The ratio is
+\[
+  \frac{\log 9}{\log 4}
+  =\frac{\log 3}{\log 2}
+  =1.584962500721156\ldots.
+\]
+Thus tripling gains about $58.50\%$ more digits per scale level and requires
+about $36.91\%$ fewer levels to reach the same asymptotic error.  The cost per
+level, however, need not be the same.
+\end{remark}
+
+% -----------------------------------------------------------
+\section{N-Series scale cancellation}
+
+\subsection{The two-scale operator}
+
+The raw factor $9$ is not the principal superconvergence mechanism.  The
+N-Series acceleration combines two scales so that the leading error term
+vanishes.
+
+\begin{definition}[Two-scale N-Series operator]
+For a fixed $m>1$, define
+\begin{equation}
+  \Rop_m[Q]_N
+  :=\frac{m^2Q_{mN}-Q_N}{m^2-1}.
+  \label{eq:Rop}
+\end{equation}
 \end{definition}
 
-\begin{lemma}[Even-power expansion]
-The sequence $P_N$ admits the asymptotic expansion
+\begin{theorem}[Cancellation of the $N^{-2}$ mode]
+Suppose
+\begin{equation}
+  Q_N=L+c_2N^{-2}+c_4N^{-4}+c_6N^{-6}+\Order(N^{-8}).
+  \label{eq:general-even-expansion}
+\end{equation}
+Then
+\begin{equation}
+  \Rop_m[Q]_N
+  =L-\frac{c_4}{m^2}N^{-4}
+    -\frac{m^2+1}{m^4}c_6N^{-6}
+    +\Order(N^{-8}).
+  \label{eq:Rop-expansion}
+\end{equation}
+In particular,
 \[
-P_N
-=
-\pi
--
-\frac{\pi^3}{6N^2}
-+
-\frac{\pi^5}{120N^4}
--
-\frac{\pi^7}{5040N^6}
-+
-O(N^{-8}).
+  \Rop_m[Q]_N=L+\Order(N^{-4}).
 \]
-In particular, only even powers of $N^{-1}$ occur.
+\end{theorem}
+
+\begin{proof}
+Substitute \eqref{eq:general-even-expansion} at the scales $N$ and $mN$ into
+\eqref{eq:Rop}.  The constant term has coefficient
+$(m^2-1)/(m^2-1)=1$, while the $N^{-2}$ coefficient is
+\[
+  \frac{m^2m^{-2}-1}{m^2-1}=0.
+\]
+The $N^{-4}$ coefficient is
+\[
+  \frac{m^2m^{-4}-1}{m^2-1}
+  =\frac{m^{-2}-1}{m^2-1}
+  =-\frac1{m^2},
+\]
+and the $N^{-6}$ coefficient is
+\[
+  \frac{m^2m^{-6}-1}{m^2-1}
+  =\frac{m^{-4}-1}{m^2-1}
+  =-\frac{m^2+1}{m^4}.
+\]
+This proves \eqref{eq:Rop-expansion}.
+\end{proof}
+
+For \eqref{eq:PNexpansion}, $c_4=\pi^5/120$.  Therefore
+\begin{equation}
+  \Rop_m[P]_N
+  =\pi-\frac{\pi^5}{120m^2N^4}+\Order(N^{-6}).
+  \label{eq:Rop-P}
+\end{equation}
+The tripling operator is
+\begin{equation}
+  \Rop_3[P]_N=\frac{9P_{3N}-P_N}{8}
+             =\pi-\frac{\pi^5}{1080N^4}+\Order(N^{-6}).
+  \label{eq:R3}
+\end{equation}
+Thus one further tripling reduces its leading fourth-order error by
+$3^4=81$, whereas one further doubling in a fourth-order doubling sequence
+reduces the corresponding leading error by $2^4=16$.  The per-stage
+error-factor ratio is
+\[
+  \frac{81}{16}=5.0625,
+\]
+while the ratio of decimal digits gained per scale level remains
+$\log 3/\log 2$.
+
+\subsection{Higher N-Series columns}
+
+The same idea extends to several scales.  The algebra is the standard
+Richardson--Romberg cancellation mechanism~\cite{richardson-gaunt,romberg}; the
+geometric content lies in the particular polygonal scale family and its finite
+constructible realization.
+
+\begin{proposition}[Multiscale even-power cancellation]
+Suppose
+\begin{equation}
+  Q_N=L+\sum_{r=1}^{s}c_{2r}N^{-2r}
+      +\Order(N^{-2s-2}).
+  \label{eq:multi-expansion}
+\end{equation}
+Fix $m>1$.  There is a unique weight vector
+$w_0,\ldots,w_s$ satisfying
+\begin{equation}
+  \sum_{j=0}^{s}w_j=1,
+  \qquad
+  \sum_{j=0}^{s}w_jm^{-2rj}=0
+  \quad (r=1,\ldots,s).
+  \label{eq:moment-conditions}
+\end{equation}
+For these weights,
+\begin{equation}
+  \Rmulti_{m,s}[Q]_N
+  :=\sum_{j=0}^{s}w_jQ_{m^jN}
+  =L+\Order(N^{-2s-2}).
+  \label{eq:multi-operator}
+\end{equation}
+\end{proposition}
+
+\begin{proof}
+The linear system \eqref{eq:moment-conditions} is a Vandermonde system in the
+distinct nodes
+\[
+  1,\ m^{-2},\ m^{-4},\ \ldots,\ m^{-2s},
+\]
+and therefore has a unique solution.  Substitution of
+\eqref{eq:multi-expansion} into \eqref{eq:multi-operator} shows that the
+normalization preserves $L$ and that the moment conditions cancel the terms
+$N^{-2},\ldots,N^{-2s}$.
+\end{proof}
+
+\begin{remark}[Novelty and attribution]
+\label{rem:novelty}
+The cancellation identities, the even-power expansion of $N\sin(\pi/N)$, and
+Richardson extrapolation applied to polygonal perimeters are all classical; the
+last is already present in Richardson and Gaunt~\cite{richardson-gaunt}, and the
+even-power expansion is considerably older.  No priority is claimed for any of
+them.  The contributions claimed here are instead the $\pi$-free cubic chord
+ladder of Section~\ref{subsec:chord-recurrence} with its exact branch
+identification (Theorem~\ref{thm:triple-angle-identification}); the oracle-free
+exact-rational finite-value certificate of
+Theorem~\ref{thm:certified-canonical-value}; the perturbation calculus of
+Lemma~\ref{lem:transfer} together with the inheritance identity and
+target-dependent budget of Section~\ref{subsec:ladder}, which separate the
+constructive angular residual from the scale-truncation error and fix the
+refinement depth required to preserve each asymptotic law; and the companion
+Lean~4 formalization of Section~\ref{sec:lean}.
+\end{remark}
+
+% -----------------------------------------------------------
+\section{Algebraic and constructible tripling lanes}
+
+\subsection{A $\pi$-free algebraic chord recurrence}
+\label{subsec:chord-recurrence}
+
+Set
+\begin{equation}
+  c_N:=\sin\!\left(\frac{\pi}{N}\right),
+  \qquad P_N=Nc_N.
+  \label{eq:chord-half-length}
+\end{equation}
+The identity
+\[
+  \sin(3x)=3\sin x-4\sin^3x
+\]
+with $x=\pi/(3N)$ gives
+\begin{equation}
+  4u^3-3u+c_N=0,
+  \qquad u=c_{3N}.
+  \label{eq:cubic-tripling}
+\end{equation}
+Starting from an algebraic seed such as
+\[
+  c_6=\frac12
+  \qquad\text{or}\qquad
+  c_3=\frac{\sqrt3}{2},
+\]
+one may generate the entire tripling ladder by repeatedly selecting the
+smallest positive root of \eqref{eq:cubic-tripling}.  No decimal expansion of $\pi$ is
+required to generate the chord data; $\pi$ enters only afterward as an
+external reference for measuring the error.
+
+\begin{remark}[Algebraic does not mean Euclidean-constructible]
+Equation~\eqref{eq:cubic-tripling} supplies an exact algebraic relation, but a
+general cubic root is not obtainable by straightedge and compass.  The
+$\pi$-free production script is therefore an algebraic numerical realization
+of exact chord tripling, not a claim that every regular $3N$-gon is classically
+constructible.  The approximate-trisection lane below is the genuinely finite
+straightedge-and-compass realization.
+\end{remark}
+
+\begin{proposition}[Unique selected cubic branch]
+\label{prop:unique-cubic-branch}
+For every $0<c\le\tfrac12$, the polynomial
+\[
+  f_c(u)=4u^3-3u+c
+\]
+has exactly one zero in the interval $(0,c/2)$.
+\end{proposition}
+
+\begin{proof}
+At the endpoints,
+\[
+  f_c(0)=c>0,
+  \qquad
+  f_c\!\left(\frac c2\right)=\frac{c(c^2-1)}2<0.
+\]
+Moreover,
+\[
+  f_c'(u)=12u^2-3<0
+\]
+for $0\le u\le c/2\le1/4$.  Thus $f_c$ is strictly decreasing on a
+sign-changing interval and has exactly one zero there.
+\end{proof}
+
+\begin{theorem}[Exact identification of the algebraic tripling ladder]
+\label{thm:triple-angle-identification}
+Let $c_0=1/2$, and define $c_{L+1}$ to be the unique zero of
+\[
+  4u^3-3u+c_L=0
+\]
+in $(0,c_L/2)$.  Then, for every $L\ge0$,
+\[
+  c_L=\sin\!\left(\frac{\pi}{6\cdot3^L}\right).
+\]
+Consequently, with $N_L=6\cdot3^L$,
+\[
+  N_Lc_L=N_L\sin\!\left(\frac{\pi}{N_L}\right)=P_{N_L}.
+\]
+\end{theorem}
+
+\begin{proof}
+The base case is $c_0=1/2=\sin(\pi/6)$.  Assume
+$c_L=\sin x$ with $x=\pi/(6\cdot3^L)$, and set $u=\sin(x/3)$.  The triple-angle
+identity gives $4u^3-3u+c_L=0$.  Also,
+\[
+  c_L-2u=(3u-4u^3)-2u=u(1-4u^2)>0,
+\]
+so $u\in(0,c_L/2)$.  Proposition~\ref{prop:unique-cubic-branch} makes $u$ the
+unique selected root, and induction completes the proof.
+\end{proof}
+
+\subsection{Approximate trisection}
+\label{subsec:approx-trisection}
+
+For a general angle $\theta$, exact Euclidean trisection is not available by
+straightedge and compass~\cite{wantzel}.  A specific constructible approximation
+associated with Baker's construction~\cite{baker-trisection,baker-proportional},
+presented interactively by Rostamian~\cite{rostamian}, is
+\begin{equation}
+  D(\theta)
+  =2\arcsin\!\left(\frac43\sin\frac{\theta}{8}\right).
+  \label{eq:Dtheta}
+\end{equation}
+Its local expansion is
+\begin{equation}
+  D(\theta)
+  =\frac{\theta}{3}
+   +\frac{7}{10368}\theta^3
+   +\Order(\theta^5),
+  \label{eq:Dexpansion}
+\end{equation}
+so the initial angular error is cubic.  The companion trisection work applies
+the same chord-transfer principle to the residual and obtains a local cubic
+cascade.  Each finite stage is constructible, while the exact trisection value
+is reached only in the limiting refinement.
+
+The central angle of the ideal regular $N$-gon is $2\pi/N$.  Under a tripling
+schedule, the ideal analytic sequence uses $N_j=N_0 3^j$.  At a finite
+constructive stage, let the available half-angle be
+\begin{equation}
+  \widetilde x_N=\frac{\pi}{N}+\eta_N,
+  \label{eq:angle-perturbation}
+\end{equation}
+where $\eta_N$ is the half-angle residual.  Define the corresponding chord-based
+semiperimeter estimator by
+\begin{equation}
+  \widetilde P_N:=N\sin(\widetilde x_N).
+  \label{eq:Ptilde}
+\end{equation}
+This notation does not assert that the approximate central angles close to an
+exact regular polygon; it records the constructible chord length multiplied by
+the intended side count.
+
+\begin{lemma}[Transfer of angular residual to perimeter error]
+\label{lem:transfer}
+For every $N\ge2$,
+\begin{equation}
+  \abs{\widetilde P_N-P_N}\le N\abs{\eta_N}.
+  \label{eq:perturbation-bound}
+\end{equation}
+Consequently:
+\begin{enumerate}
+  \item if $\eta_N=o(N^{-3})$, then
+        $\widetilde P_N=P_N+o(N^{-2})$, so the raw $N^{-2}$ scale law is
+        unchanged;
+  \item if $\eta_N=o(N^{-5})$ at every scale entering
+        $\Rop_m[\widetilde P]_N$, then the fourth-order cancellation law is
+        unchanged.
+\end{enumerate}
 \end{lemma}
 
 \begin{proof}
-Using
+By the mean-value theorem and $\abs{\cos t}\le1$,
 \[
-\sin x=x-\frac{x^3}{6}+\frac{x^5}{120}-\frac{x^7}{5040}+O(x^9)
+  \abs{\sin(\pi/N+\eta_N)-\sin(\pi/N)}\le\abs{\eta_N}.
 \]
-and substituting $x=\pi/N$, we obtain
-\[
-\sin\left(\frac{\pi}{N}\right)
-=
-\frac{\pi}{N}
--
-\frac{\pi^3}{6N^3}
-+
-\frac{\pi^5}{120N^5}
--
-\frac{\pi^7}{5040N^7}
-+
-O(N^{-9}).
-\]
-Multiplying by $N$ gives the claimed expansion.
+Multiplication by $N$ yields \eqref{eq:perturbation-bound}.  The two stated
+conditions follow by comparing $N\abs{\eta_N}$ with $N^{-2}$ and $N^{-4}$,
+respectively.  Fixed linear weights in $\Rop_m$ do not alter the asymptotic
+order.
 \end{proof}
 
-\begin{remark}[Full perimeter convention]
-If one uses the full perimeter
-\[
-\mathcal P_N=2N\sin\left(\frac{\pi}{N}\right),
-\]
-then the same results hold after replacing the limit $\pi$ by $2\pi$. The present paper uses the half-perimeter convention because it keeps the limiting value equal to $\pi$.
+\begin{remark}[Why ``machine precision'' is not a theorem]
+A fixed absolute angular error will eventually dominate an increasingly small
+polygonal truncation error.  The relevant requirement is therefore not that the
+residual be described informally as ``machine precision,'' but that the working
+precision and the number of residual refinements be chosen so that
+\eqref{eq:perturbation-bound} remains below the target asymptotic error.  In an
+arbitrary-precision implementation, this condition can be enforced at every
+finite stage.
 \end{remark}
 
-\section{The two-scale N-series operator}
 
-The basic acceleration law applies to any approximation sequence with an even-power expansion. The polygonal case is then obtained by taking $Q_N=P_N$.
+\subsection{A certified constructible refinement schedule}
+\label{subsec:ladder}
 
-\begin{theorem}[Two-scale N-series acceleration]
-\label{thm:two-scale}
-Let $\{Q_N\}$ be an approximation sequence satisfying
+Lemma~\ref{lem:transfer} is conditional.  It states how small the angular
+residual must be for each asymptotic law to survive, but it does not establish
+that any particular constructible ladder attains that size.  Since the title of
+this paper claims a constructive lane, that gap must be closed.  This subsection
+closes it.  Throughout we work in an \emph{exact-operation model}: angle and
+chord constructions are assumed to be performed without implementation
+tolerance, and the indicated small-angle branches of the inverse trigonometric
+functions are selected.  Physical drawing tolerance is a separate question and
+is not modelled here.
+
+Write $M_i=6\cdot3^i$, let $x_i^\ast=\pi/M_i$ denote the exact half-angle at
+level $i$, and let $\widehat x_0=\pi/6$ be the exactly constructible hexagonal
+start.  For an input half-angle $x$ put
+\begin{equation}
+  s(x)=\arcsin\!\left(\tfrac43\sin\tfrac x4\right),
+  \qquad
+  d(x)=s(x)-\frac x3,
+  \qquad
+  F(z)=z-s(3z).
+  \label{eq:seed-residual}
+\end{equation}
+Here $s(x)=\tfrac12 D(2x)$ is the half-angle form of the seed
+\eqref{eq:Dtheta}, so \eqref{eq:Dexpansion} gives
+$d(x)=\tfrac{7}{2592}x^3+\Order(x^5)$, and $F$ is the residual-transfer map
+obtained by applying the same seed to three times the measured defect.  The
+defect is accessible to the construction without any numerical oracle for
+$x/3$: comparing the parent angle $2x$ with three copies of the seed yields the
+signed residual $2x-6s(x)=-6d(x)$.  The two maps are related by
+\begin{equation}
+  F(z)=-d(3z),
+  \label{eq:F-identity}
+\end{equation}
+immediately from \eqref{eq:seed-residual}; this collapses the $F$ half of
+Lemma~\ref{lem:seed-bounds} to the $d$ half and is what the formal development
+uses.  After $k_i$ refinements at level $i$,
+\begin{equation}
+  \widehat x_i=\frac{\widehat x_{i-1}}{3}+r_i,
+  \qquad
+  r_i=F^{\circ k_i}\!\bigl(d(\widehat x_{i-1})\bigr),
+  \label{eq:ladder}
+\end{equation}
+where $k_i=0$ means the seed is used with no refinement.  Set
+$e_i=\widehat x_i-x_i^\ast$.
+
+\begin{proposition}[Exact inheritance identity]
+\label{prop:inheritance}
+Every ladder of the form \eqref{eq:ladder} satisfies
+\begin{equation}
+  e_i=\frac{e_{i-1}}{3}+r_i,
+  \qquad
+  M_Le_L=M_0e_0+\sum_{i=1}^{L}M_ir_i.
+  \label{eq:inheritance}
+\end{equation}
+\end{proposition}
+
+\begin{proof}
+Since $x_i^\ast=x_{i-1}^\ast/3$, subtracting $x_i^\ast$ from \eqref{eq:ladder}
+gives the first identity.  Multiplying by $M_i=3M_{i-1}$ and telescoping gives
+the second.
+\end{proof}
+
+The content of \eqref{eq:inheritance} is a negative one: the refinement $F$ is
+applied to the fresh local defect $d(\widehat x_{i-1})$ and therefore does
+\emph{not} act on the inherited term $e_{i-1}/3$.  Any argument that assumes a
+refinement stage contracts the \emph{whole} residual is assuming a mechanism
+that \eqref{eq:ladder} does not provide, and a recurrence of the form
+$e_i\le C(e_{i-1}/3+aM_i^{-3})^3$ is not the recurrence of this ladder.
+
+\begin{lemma}[Elementary seed and cubic bounds]
+\label{lem:seed-bounds}
+For $0<x\le\tfrac32$,
+\begin{equation}
+  0<d(x)\le\frac{x^3}{81},
+  \label{eq:seed-bounds}
+\end{equation}
+and consequently, for $\abs z\le\tfrac12$,
+\begin{equation}
+  \operatorname{sgn}F(z)=-\operatorname{sgn}z\quad(z\ne0),
+  \qquad
+  \abs{F(z)}\le\frac{\abs z^3}{3}.
+  \label{eq:F-bounds}
+\end{equation}
+\end{lemma}
+
+\begin{proof}
+Granted \eqref{eq:seed-bounds}, both parts of \eqref{eq:F-bounds} follow from
+the identity \eqref{eq:F-identity}.  At $z=0$ both sides of the magnitude claim
+vanish, since $s(0)=0$ and hence $F(0)=0$.  For $0<\abs z\le\tfrac12$ we have
+$0<3\abs z\le\tfrac32$, so $F(z)=-d(3z)$ is nonzero of sign opposite to $z$,
+and, $d$ being odd in the relevant sense through \eqref{eq:F-identity},
 \[
-Q_N
-=
-Q+\frac{C_2}{N^2}+\frac{C_4}{N^4}+O(N^{-6}).
+  \abs{F(z)}=d(3\abs z)\le\frac{(3\abs z)^3}{81}=\frac{\abs z^3}{3}.
 \]
-For an integer $k>1$, define
+For \eqref{eq:seed-bounds}, note that $x/3$ and $x/3+x^3/81$ both lie in
+$[0,\pi/2]$ for $0<x\le\tfrac32$, and that $\arcsin$ is increasing; since
+$s(x)=\arcsin\bigl(\tfrac43\sin(x/4)\bigr)$, the claim is therefore equivalent
+to the pair
+\begin{equation}
+  \sin\frac x3<\frac43\sin\frac x4,
+  \qquad
+  \frac43\sin\frac x4\le\sin\!\left(\frac x3+\frac{x^3}{81}\right),
+  \label{eq:two-sine}
+\end{equation}
+the first giving $d(x)>0$ and the second $d(x)\le x^3/81$.  Both reduce to
+polynomial inequalities by the two-sided cubic bound
+$\abs{\sin t-(t-t^3/6)}\le\tfrac{5}{96}t^4$, valid for $\abs t\le1$, applied at
+$t=x/3$, $t=x/4$ and $t=x/3+x^3/81$; on $(0,\tfrac32]$ the resulting gaps are
+at least $1.33\times10^{-3}x^3$ and $6.24\times10^{-3}x^3$ respectively.
+\end{proof}
+
+\begin{remark}[On the range and the constant]
+\label{rem:seed-range}
+The interval $(0,\tfrac32]$ is wider than the $(0,\pi/6]$ one might expect from
+the construction, and deliberately so: since $3\cdot\tfrac12=\tfrac32$, it is
+exactly what makes \eqref{eq:F-bounds} available on all of $\abs z\le\tfrac12$
+through \eqref{eq:F-identity}, with no separate argument for $F$.  The constant
+$1/81$ is not sharp.  The true leading behaviour is
+$d(x)=\tfrac{7}{2592}x^3+\Order(x^5)$, and at the right endpoint
 \[
-\widehat Q_N^{(k)}
-:=
-Q_{kN}+\frac{Q_{kN}-Q_N}{k^2-1}.
+  \frac{81\,d(3/2)}{(3/2)^3}=0.2451186\ldots,
 \]
-Then
+numerical sampling on $(0,\tfrac32]$ finding no larger value; we do not prove
+that the endpoint is the maximum, and do not need to.  A sharper constant would
+shorten the schedules of Remarks~\ref{rem:ladder-instance}
+and~\ref{rem:eleven-instance} but is not needed.
+\end{remark}
+
+\begin{proposition}[One refinement per level does not suffice]
+\label{prop:one-refinement-fails}
+Let $\widehat x_0=\pi/6$ and $k_i=1$ for every $i\ge1$.  Then $M_Le_L$ converges
+to a strictly negative constant $B$, so that $e_L=\Theta(M_L^{-1})$ and
 \[
-\widehat Q_N^{(k)}=Q+O(N^{-4}).
+  M_L\sin(\widehat x_L)\longrightarrow\pi+B\ne\pi.
 \]
-Thus the entire $N^{-2}$ term is cancelled exactly.
+\end{proposition}
+
+\begin{proof}
+By Lemma~\ref{lem:seed-bounds} each $r_i=F(d(\widehat x_{i-1}))$ is strictly
+negative, and $\abs{r_i}\le x^9/(3\cdot81^3)$ for $x=\widehat x_{i-1}$, which is
+smaller than $x/3$; hence the inputs remain positive and bounded by $\pi/6$ by
+induction, and $\widehat x_i<\widehat x_{i-1}/3$ gives the upper range.  Since
+$\widehat x_i\le\pi/M_i$ we have $\abs{r_i}=\Order(M_i^{-9})$, so
+$\sum_iM_ir_i$ converges absolutely to some $B<0$; with $e_0=0$,
+Proposition~\ref{prop:inheritance} gives $M_Le_L\to B$.  Finally
+$M_L\sin(\widehat x_L)-\pi=M_L\bigl(\sin\widehat x_L-\widehat x_L\bigr)+M_Le_L$
+and the first term is $\Order(M_L^{-2})$.
+\end{proof}
+
+A high-precision evaluation of the hexagon-seeded one-refinement ladder gives
+\[
+  M_Le_L\longrightarrow B=-7.95113571713\times10^{-11},
+\]
+stable to the digits shown from $L=3$ onward.  This figure is a numerical
+diagnostic; the sign and the nonvanishing of the limit are established
+analytically by Proposition~\ref{prop:one-refinement-fails}.  The bias is far
+smaller than the $7/16$ leading-coefficient shift of the \emph{unrefined}
+single-level seed, but it does not vanish, and an $\Theta(M_L^{-1})$ half-angle
+residual violates both hypotheses of Lemma~\ref{lem:transfer}.
+
+The repair is to stop asking for a single infinite ladder with a fixed
+refinement count and instead fix the target depth first.
+
+\begin{theorem}[Finite-target certified ladder]
+\label{thm:finite-target}
+Fix a level $L\ge1$ and a desired total scaled error $\tau_L>0$.  Suppose that
+for every $i=1,\ldots,L$ the refinement count $k_i=k_i(L)$ in \eqref{eq:ladder}
+is chosen so that
+\begin{equation}
+  \abs{r_i}\le\frac{\tau_L}{LM_i}.
+  \label{eq:budget}
+\end{equation}
+Then the hexagon-seeded ladder satisfies
+\begin{equation}
+  \abs{\widehat x_L-\frac{\pi}{M_L}}\le\frac{\tau_L}{M_L},
+  \qquad
+  \abs[\big]{M_L\sin(\widehat x_L)-M_L\sin(\pi/M_L)}\le\tau_L.
+  \label{eq:finite-target}
+\end{equation}
 \end{theorem}
 
 \begin{proof}
-Substituting $kN$ into the expansion gives
+Apply \eqref{eq:inheritance} with $e_0=0$ and the triangle inequality:
+$M_L\abs{e_L}\le\sum_{i=1}^{L}M_i\abs{r_i}\le\tau_L$.  The second estimate
+follows from $\abs{\sin u-\sin v}\le\abs{u-v}$.
+\end{proof}
+
+No smallness of $\tau_L$ is used here: the estimate is a consequence of the
+budget \eqref{eq:budget} and the inheritance identity alone.  A restriction on
+$\tau_L$ enters only with the explicit schedule below, where the bootstrap needs
+it; see Remark~\ref{rem:lean-hypothesis}.
+
+\begin{corollary}[The constructible lane inherits the accelerated law]
+\label{cor:lane}
+Choosing $\tau_L=M_L^{-5}$ in Theorem~\ref{thm:finite-target} gives
+$\abs{e_L}\le M_L^{-6}=o(M_L^{-5})$.  Hence the hypothesis of
+Lemma~\ref{lem:transfer}\,(2) holds along the constructible tripling sequence,
+and the fourth-order cancellation law of \eqref{eq:R3} is available on that lane
+with the same leading constant.
+\end{corollary}
+
+The refinement counts can be fixed by an entirely rational recurrence, so no
+square roots or transcendental evaluations enter the budget check.  For this
+construction we additionally require
+\begin{equation}
+  \tau_L\le10^{-2},
+  \label{eq:tau-small}
+\end{equation}
+which the bootstrap below uses and which Theorem~\ref{thm:finite-target} itself
+does not.  By
+Lemma~\ref{lem:seed-bounds}, $k$ refinements starting from a defect majorant
+$\abs d\le D<\tfrac12$ satisfy $\abs{F^{\circ k}(d)}\le b_k$, where
+$b_0=D$ and $b_{j+1}=b_j^3/3$; iterate until $b_{k_i}\le\tau_L/(LM_i)$.
+
+The bootstrap of \eqref{eq:inheritance} keeps
+$\widehat x_{i-1}\le(\pi+\tau_L)/M_{i-1}$, so it suffices to fix any constant
+$C$ with
+\begin{equation}
+  \pi+\tau_L\le C
+  \qquad\text{and}\qquad
+  C\le9,
+  \label{eq:bootstrap-constant}
+\end{equation}
+the second condition giving $C/M_i\le\tfrac32$ at every level because
+$M_i\ge6$.  By Lemma~\ref{lem:seed-bounds} the rational seed majorant
+\begin{equation}
+  D_i=\frac{1}{81}\left(\frac{C}{M_{i-1}}\right)^{\!3}
+  \label{eq:seed-majorant}
+\end{equation}
+is then admissible and well below $\tfrac12$.  Since $b\mapsto b^3/3$ contracts
+on $(0,\tfrac12)$, the process terminates for every finite $L$ and every
+$\tau_L>0$.
+
+\begin{remark}[Exact-rational instances]
+\label{rem:ladder-instance}
+Take $L=10$, so $M_L=354294$, and $\tau_L=10^{-85}$.  The counts returned by the
+rational recurrence depend on the bootstrap constant of
+\eqref{eq:bootstrap-constant}:
 \[
-Q_{kN}
-=
-Q+\frac{C_2}{k^2N^2}+\frac{C_4}{k^4N^4}+O(N^{-6}).
+  C=\tfrac{16}{5}:\quad(k_1,\ldots,k_{10})=(4,3,3,3,3,2,2,2,2,2),
+  \qquad
+  C=\tfrac{401}{100}:\quad(4,3,3,3,3,3,2,2,2,2).
+\]
+In both cases $\sum_{i=1}^{10}M_ib_{i,k_i}\le\tau_L$ as exact fractions, hence
+$\abs{e_{10}}\le10^{-85}/354294$.  Both constants are admissible as
+mathematics: $\pi+\tau_L\le\tfrac{16}{5}$ already follows for every
+$\tau_L\le10^{-2}$ from the classical $\pi<22/7$, since
+$22/7+10^{-2}<\tfrac{16}{5}$.  The second schedule is nevertheless the one
+carried through the formal development of Section~\ref{sec:lean}, for the
+reason given in Remark~\ref{rem:lean-constant}.  The extra refinement at level
+$6$ is then necessary and not merely cautious: with $k_6=2$ and
+$C=\tfrac{401}{100}$ the budget check fails.  Either schedule certifies the
+refinement budget only; neither certifies physical construction tolerances.
+\end{remark}
+
+\begin{remark}[Measuring the inherited error directly]
+\label{rem:replication}
+Proposition~\ref{prop:one-refinement-fails} is a statement about
+\eqref{eq:ladder}, in which the correction sees only the local defect.  There is
+one further oracle-free mechanism that does expose the inherited error, and we
+record it because it delimits exactly what
+Proposition~\ref{prop:one-refinement-fails} does and does not rule out.  Because
+the exact targets telescope, $3^ix_i^\ast=\pi/6=\widehat x_0$, so comparing
+$3^i$ copies of the current half-angle against the constructible hexagonal
+half-angle gives
+\[
+  3^i\widehat x_i-\widehat x_0
+  =3^i\bigl(x_i^\ast+e_i\bigr)-\frac{\pi}{6}
+  =3^ie_i.
+\]
+The comparison therefore returns the \emph{total} accumulated error $3^ie_i$,
+with no reference to any numerical value of $\pi$, and correcting against it
+restores the self-correcting cubic recurrence that \eqref{eq:ladder} lacks.  The
+cost is $3^i$ angle replications at level $i$, which is exponential in the
+level, so we do not develop this lane further; Theorem~\ref{thm:finite-target}
+is the practical route.  We state it to make precise that the obstruction is
+one of measurement cost, not of principle.
+\end{remark}
+
+% -----------------------------------------------------------
+\section{The identity $\pi_g=\pi$}
+\label{sec:pig}
+
+Earlier exploratory descriptions treated $\pi_g$ as a numerically observed
+geometric constant whose equality with $\pi$ remained open.  In the present
+formulation the equality follows directly from limit preservation.
+
+\begin{definition}[Geometric polygonal limit]
+For any fixed $N_0\ge3$ and scale factor $m>1$, define
+\begin{equation}
+  \pi_g:=\lim_{j\to\infty}P_{m^jN_0},
+  \label{eq:pig-def}
+\end{equation}
+provided the limit exists.  One may analogously define accelerated limits from
+$\Rop_m[P]_{m^jN_0}$ or from higher N-Series columns.
+\end{definition}
+
+\begin{theorem}[Limit preservation]
+For the polygonal sequence \eqref{eq:PN},
+\begin{equation}
+  \pi_g=\pi.
+  \label{eq:pig-pi}
+\end{equation}
+Moreover,
+\[
+  \lim_{j\to\infty}\Rop_m[P]_{m^jN_0}=\pi,
+\]
+and every multiscale operator satisfying
+\eqref{eq:moment-conditions} has the same limit.
+\end{theorem}
+
+\begin{proof}
+Since $\sin x/x\to1$ as $x\to0$,
+\[
+  P_N
+  =\pi\frac{\sin(\pi/N)}{\pi/N}
+  \longrightarrow\pi.
+\]
+Hence every subsequence $P_{m^jN_0}$ has limit $\pi$, proving
+\eqref{eq:pig-pi}.  The two-scale operator is a fixed linear combination whose
+weights sum to one:
+\[
+  \frac{m^2}{m^2-1}-\frac{1}{m^2-1}=1.
+\]
+Therefore it preserves any common limit.  The same argument applies to the
+multiscale weights because $\sum_jw_j=1$.
+\end{proof}
+
+\begin{corollary}[Constructible chord stages]
+If $N_j\abs{\eta_{N_j}}\to0$ along a constructible tripling sequence, then
+\[
+  \widetilde P_{N_j}\longrightarrow\pi.
+\]
+Thus the limiting value is not a distinct constant; the notation $\pi_g$
+records the geometric route by which $\pi$ is approached.
+\end{corollary}
+
+\begin{proof}
+By \eqref{eq:perturbation-bound},
+$\widetilde P_{N_j}-P_{N_j}\to0$, while $P_{N_j}\to\pi$.
+\end{proof}
+
+% -----------------------------------------------------------
+\section{Numerical verification}
+
+\subsection{Raw doubling and tripling}
+
+Table~\ref{tab:raw-comparison} uses the exact analytic reference
+\eqref{eq:PN}.  The entries were evaluated at high working precision; the
+printed decimals are rounded only for display.
+
+\begin{table}[htbp]
+\centering
+\caption{Raw inscribed-polygon errors for matched doubling and tripling stages
+starting from $N_0=6$.}
+\label{tab:raw-comparison}
+\small
+\begin{tabular}{@{}r r l r l@{}}
+\toprule
+Stage & Doubling $N$ & $\pi-P_N$ & Tripling $N$ & $\pi-P_N$ \\
+\midrule
+0 & 6   & $1.4159265359\times10^{-1}$ & 6    & $1.4159265359\times10^{-1}$ \\
+1 & 12  & $3.5764112360\times10^{-2}$ & 18   & $1.5925455585\times10^{-2}$ \\
+2 & 24  & $8.9640403086\times10^{-3}$ & 54   & $1.7718924241\times10^{-3}$ \\
+3 & 48  & $2.2424505429\times10^{-3}$ & 162  & $1.9690655424\times10^{-4}$ \\
+4 & 96  & $5.6070269928\times10^{-4}$ & 486  & $2.1878871714\times10^{-5}$ \\
+5 & 192 & $1.4018130433\times10^{-4}$ & 1458 & $2.4309902606\times10^{-6}$ \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+After twelve refinements,
+\[
+  N_{\mathrm{double}}=6\cdot2^{12}=24576,
+  \qquad
+  N_{\mathrm{triple}}=6\cdot3^{12}=3188646.
+\]
+The corresponding errors are
+\begin{align*}
+  E_{24576}
+  &=8.55610234179050\times10^{-9},\\
+  E_{3188646}
+  &=5.08259791140011\times10^{-13},
+\end{align*}
+with ratio
+\[
+  \frac{E_{24576}}{E_{3188646}}
+  =16834.1121822748\ldots,
+\]
+in close agreement with the asymptotic prediction
+$(9/4)^{12}=16834.1121960282\ldots$.
+
+\subsection{Fourth-order tripling cancellation}
+
+Table~\ref{tab:R3} evaluates \eqref{eq:R3}.  The ratio of successive errors
+approaches $81$, confirming fourth-order behavior along the tripling scale.
+
+\begin{table}[htbp]
+\centering
+\caption{Errors of the two-scale tripling operator
+$\Rop_3[P]_N=(9P_{3N}-P_N)/8$.}
+\label{tab:R3}
+\small
+\begin{tabular}{@{}r r l l@{}}
+\toprule
+Stage & Base $N$ & $\pi-\Rop_3[P]_N$ & Previous error / current error \\
+\midrule
+0 & 6    & $2.1705583445\times10^{-4}$ & --- \\
+1 & 18   & $2.6970289799\times10^{-6}$ & $80.4796078$ \\
+2 & 54   & $3.3320513201\times10^{-8}$ & $80.9420000$ \\
+3 & 162  & $4.1139710291\times10^{-10}$ & $80.9935533$ \\
+4 & 486  & $5.0790214954\times10^{-12}$ & $80.9992837$ \\
+5 & 1458 & $6.2704030692\times10^{-14}$ & $80.9999204$ \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\subsection{A $\pi$-free chord-ladder verification}
+
+The algebraic recurrence \eqref{eq:cubic-tripling} permits a direct test in
+which the approximants are generated without evaluating a trigonometric
+function at $\pi/N$.  Representative results from the scale-$3$ computation
+are shown in Table~\ref{tab:pi-free}.  The raw column uses the chord ladder
+itself; the accelerated column uses the growing N-Series cancellation tableau.
+
+\begin{table}[htbp]
+\centering
+\caption{Representative $\pi$-free chord-ladder verification.  The reference
+value of $\pi$ is used only after the approximants have been generated, to
+count matching decimal digits.}
+\label{tab:pi-free}
+\begin{tabular}{@{}r r r@{}}
+\toprule
+Tripling levels $L$ & Raw half-perimeter & Accelerated scale-$3$ N-Series \\
+\midrule
+60  & 57 digits  & 1{,}948 digits \\
+95  & 90 digits  & 4{,}705 digits \\
+152 & 145 digits & 11{,}199 digits \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+As an implementation cross-check, triangle-seeded and hexagon-seeded versions
+of the cubic chord ladder were run independently and their accelerated strings
+agreed through $100{,}000$ decimal digits.  In the corresponding certified run,
+the largest reported cubic residual was below
+$1.3\times10^{-100126}$ and the largest derivative-based root-error bound was
+below $4.4\times10^{-100127}$.  These certificates concern the numerical root
+solves in \eqref{eq:cubic-tripling}; they do not convert those cubic roots into
+straightedge-and-compass constructions.
+
+
+\subsection{Certified finite-value Richardson enclosure}
+\label{subsec:certified-enclosure}
+
+The previous diagonal-difference diagnostic measured numerical stabilization
+but did not by itself bound the distance to $\pi$.  The canonical certification
+lane of~\cite{baker-certification} replaces that diagnostic as the proof
+mechanism.
+
+Two quantities must be distinguished, and we fix notation for them here and use
+it throughout: $T_s$ denotes the \emph{exact} tableau value formed from the
+analytic polygon inputs, and $\widehat\pi_g$ denotes the \emph{emitted} value of
+the finite-precision production computation.  For eleven exact polygon inputs,
+let $s=10$ and write
+\[
+  T_s=\sum_{j=0}^{s}w_jP_{6\cdot3^j},
+\]
+where the rational weights are generated by the Richardson recurrence.  They
+satisfy, exactly,
+\[
+  \sum_{j=0}^{s}w_j=1,
+  \qquad
+  \sum_{j=0}^{s}\frac{w_j}{(6\cdot3^j)^{2m}}=0
+  \quad(1\le m\le s).
+\]
+
+\begin{theorem}[Certified canonical scale-$3$ value]
+\label{thm:certified-canonical-value}
+Let $\widehat\pi_g$ be the value emitted by the canonical production computation
+using $120$ decimal digits and the eleven chord levels $L=0,\ldots,10$.  Exact
+rational cubic-root intervals and exact rational affine propagation through the
+Richardson tableau give
+\[
+  \abs{\widehat\pi_g-T_{10}}
+  \le
+  B_{\rm num}
+  =1.60292123843046314\times10^{-89}.
+\]
+Using $U=22/7$ and the alternating sine-series remainder gives
+\[
+  \abs{T_{10}-\pi}
+  \le
+  B_{\rm an}
+  =3.40628574228490542\times10^{-81}.
+\]
+Therefore
+\begin{equation}
+  \abs{\widehat\pi_g-\pi}
+  \le B_{\rm num}+B_{\rm an}
+  <3.406285758314118\times10^{-81}
+  <10^{-80}.
+  \label{eq:certified-r9-bound}
+\end{equation}
+Thus the canonical finite value is certified to at least $80$ decimal places
+of absolute accuracy without consulting a numerical $\pi$ oracle.
+\end{theorem}
+
+\begin{proof}
+For every $N\ge6$, truncate the sine expansion after the $N^{-20}$ term.  Since
+$0<\pi/N<1$, the alternating terms decrease, and
+\[
+  \abs{r_{10}(N)}
+  \le
+  \frac{U^{23}}{23!N^{22}}.
+\]
+The exact moment identities preserve the constant term and cancel the ten modes
+\[
+  N^{-2},\ N^{-4},\ \ldots,\ N^{-20}.
 \]
 Hence
 \[
-Q_{kN}-Q_N
-=
-C_2\left(\frac{1}{k^2}-1\right)\frac{1}{N^2}
-+
-C_4\left(\frac{1}{k^4}-1\right)\frac{1}{N^4}
-+
-O(N^{-6}).
+  \abs{T_{10}-\pi}
+  \le
+  \frac{U^{23}}{23!}
+  \sum_{j=0}^{10}\frac{\abs{w_j}}{(6\cdot3^j)^{22}}
+  =B_{\rm an}.
 \]
-Dividing by $k^2-1$ gives
-\[
-\frac{Q_{kN}-Q_N}{k^2-1}
-=
--\frac{C_2}{k^2N^2}
--
-\frac{C_4(k^2+1)}{k^4N^4}
-+
-O(N^{-6}).
-\]
-Therefore
-\[
-\widehat Q_N^{(k)}
-=
-Q
-+
-\left(\frac{C_2}{k^2N^2}-\frac{C_2}{k^2N^2}\right)
-+
-O(N^{-4})
-=
-Q+O(N^{-4}).
-\]
+The weights are the Lagrange basis at the nodes $x_j=(6\cdot3^j)^{-2}$
+evaluated at the origin, $w_i=\prod_{k\ne i}x_k/(x_k-x_i)$, so a referee can
+regenerate them from this paper alone.  Exact rational evaluation gives
+$\sum_jw_j=1$ with moments $1$ through $10$ vanishing identically,
+$\max_j\abs{w_j}=1.1408\ldots$, $\sum_j\abs{w_j}=1.2852\ldots$, and
+$\sum_{j=0}^{10}\abs{w_j}/(6\cdot3^j)^{22}=3.2085\times10^{-70}$.  The tableau
+is therefore \emph{moderately} conditioned rather than amplification-free:
+because $\sum_jw_j=1$ while $\sum_j\abs{w_j}>1$, independent input-error bounds
+are magnified in the worst case by the factor $1.2852\ldots$.  The absolute
+weights are strongly concentrated on the finest two levels,
+$\abs{w_{10}}=1.1408\ldots$ and $\abs{w_9}=0.1426\ldots$, with
+$\abs{w_j}\le2.45\times10^{-6}$ for every $j\le7$, so that factor is governed
+almost entirely by those two levels.  All printed
+bounds are rounded upward in the last displayed digit, so each displayed value
+is itself a valid bound.
+The recursive cubic coefficient is enclosed at each level by exact dyadic
+rational endpoints.  Monotonicity of the selected root with respect to the
+coefficient permits interval-valued input propagation, and sign-aware exact
+rational affine arithmetic encloses the complete Richardson tableau.  The
+production value $\widehat\pi_g$ is itself an exact binary rational, so its
+distance from that tableau interval is bounded by $B_{\rm num}$.  The triangle inequality
+then yields \eqref{eq:certified-r9-bound}.
 \end{proof}
 
-\begin{corollary}[Polygonal acceleration]
-\label{cor:polygon-two-scale}
-For
-\[
-P_N=N\sin\left(\frac{\pi}{N}\right),
-\]
-define
-\[
-\widehat P_N^{(k)}
-=
-P_{kN}+\frac{P_{kN}-P_N}{k^2-1}.
-\]
-Then
-\[
-\widehat P_N^{(k)}=\pi+O(N^{-4}).
-\]
-More precisely,
-\[
-\widehat P_N^{(k)}
-=
-\pi-
-\frac{\pi^5}{120k^2N^4}
-+O(N^{-6}).
-\]
+
+\begin{corollary}[Certified constructible-lane tableau value]
+\label{cor:eleven-input}
+Theorem~\ref{thm:certified-canonical-value} draws its eleven polygon inputs from
+the exact algebraic recurrence \eqref{eq:cubic-tripling}, and $B_{\rm num}$
+accounts for the root solves only.  Suppose instead that every input is supplied
+by the constructible ladder \eqref{eq:ladder}, so that
+$\widetilde P_{M_j}=M_j\sin(\widehat x_j)$ with $M_j=6\cdot3^j$, and put
+$\widetilde T_{10}=\sum_{j=0}^{10}w_j\widetilde P_{M_j}$.  Fix a construction
+allowance $B_{\rm con}>0$ and run a \emph{single} ladder to level $10$ under the
+budget of Theorem~\ref{thm:finite-target} with
+\begin{equation}
+  \tau=\frac{B_{\rm con}}{\sum_{j=0}^{10}\abs{w_j}}.
+  \label{eq:eleven-budget}
+\end{equation}
+Then $M_j\abs{e_j}\le\tau$ holds for all $j\le10$ simultaneously, and
+\begin{equation}
+  \abs[\big]{\widetilde T_{10}-T_{10}}
+  \le\sum_{j=0}^{10}\abs{w_j}\,M_j\abs{e_j}
+  \le B_{\rm con},
+  \qquad
+  \abs[\big]{\widetilde T_{10}-\pi}\le B_{\rm con}+B_{\rm an}.
+  \label{eq:eleven-total}
+\end{equation}
+The two contributions are the construction allowance and the analytic
+truncation only.  A finite-precision \emph{evaluation} of $\widetilde T_{10}$
+would carry a third term in the role of $B_{\rm num}$, bounding the arithmetic
+of the tableau itself; \eqref{eq:eleven-total} is stated for exact evaluation of
+the constructed inputs.
 \end{corollary}
 
 \begin{proof}
-Apply Theorem~\ref{thm:two-scale} with
-\[
-Q=\pi,
-\qquad
-C_2=-\frac{\pi^3}{6},
-\qquad
-C_4=\frac{\pi^5}{120}.
-\]
-The $N^{-4}$ coefficient after acceleration is $-C_4/k^2$, giving the displayed formula.
+Proposition~\ref{prop:inheritance} with $e_0=0$ gives
+$M_je_j=\sum_{i=1}^{j}M_ir_i$ for every $j\le10$, so the single budget
+$\sum_{i=1}^{10}M_i\abs{r_i}\le\tau$ supplied by
+Theorem~\ref{thm:finite-target} bounds $M_j\abs{e_j}$ by $\tau$ at every level
+at once rather than only at the top level.
+Lemma~\ref{lem:transfer} gives
+$\abs{\widetilde P_{M_j}-P_{M_j}}\le M_j\abs{e_j}$, so the triangle inequality
+and \eqref{eq:eleven-budget} yield the first estimate in
+\eqref{eq:eleven-total}; the second combines it with
+Theorem~\ref{thm:certified-canonical-value}.
 \end{proof}
 
-\section{The accelerated geometric limit}
-
-\begin{definition}[Accelerated polygonal limit]
-For fixed $k>1$, define
+\begin{remark}[Cost of the eleven-input budget]
+\label{rem:eleven-instance}
+Take $B_{\rm con}=10^{-81}$, which is far inside \eqref{eq:tau-small} once
+divided by $\sum_j\abs{w_j}$, so the explicit schedule applies.  The allowance
+does not leave the analytic bound unchanged; it is \emph{added} to it, giving
 \[
-\pi_g^{(k)}:=\lim_{N\to\infty}\widehat P_N^{(k)},
+  \abs[\big]{\widetilde T_{10}-\pi}
+  \le B_{\rm con}+B_{\rm an}
+  =4.40628574228\ldots\times10^{-81}
+  <10^{-80},
 \]
-whenever the limit exists.
-\end{definition}
-
-\begin{theorem}[Equality of the accelerated and classical limits]
-\label{thm:pi-g-equals-pi}
-For every fixed integer $k>1$,
+so the $80$-decimal threshold of
+Theorem~\ref{thm:certified-canonical-value} is preserved on the constructible
+lane, at the cost of raising the certified bound by rather less than a factor of
+two.  This choice gives $\tau=7.7808\ldots\times10^{-82}$.  The rational
+recurrence of
+Section~\ref{subsec:ladder} then returns the refinement counts
 \[
-\pi_g^{(k)}=\pi.
+  (k_1,\ldots,k_{10})=(4,3,3,3,3,2,2,2,2,2)
 \]
-\end{theorem}
-
-\begin{proof}
-By Corollary~\ref{cor:polygon-two-scale},
+for either admissible constant, the allowance here being loose enough that the
+choice of $C$ does not change them; this is \emph{not} the schedule of
+Remark~\ref{rem:ladder-instance} at $C=\tfrac{401}{100}$, whose much smaller
+$\tau_L=10^{-85}$ forces an extra refinement at level $6$.  The resulting
+exact-rational budget does depend on $C$:
 \[
-\widehat P_N^{(k)}=\pi+O(N^{-4}).
+  \sum_{i=1}^{10}M_ib_{i,k_i}
+  =5.9378\times10^{-88}\ \ \bigl(C=\tfrac{16}{5}\bigr),
+  \qquad
+  2.6271\times10^{-85}\ \ \bigl(C=\tfrac{401}{100}\bigr),
 \]
-Taking $N\to\infty$ gives the result.
-\end{proof}
+consuming about $10^{-6}$ and $3.4\times10^{-4}$ of the allowance
+respectively.  The margins are this wide because $b\mapsto b^3/3$ triples the
+exponent at each refinement, so a single extra refinement at the coarsest
+levels buys many orders of magnitude.  The eleven-input constructible
+certificate is therefore essentially free once
+Theorem~\ref{thm:finite-target} is available.
 
-\begin{remark}[No redefinition of $\pi$]
-The N-series operator does not define a new constant. It preserves the Archimedean limit and changes only the finite-resolution error structure of the approximating sequence.
+The formal development of Section~\ref{sec:lean} certifies a \emph{different and
+tighter} instance of Corollary~\ref{cor:eleven-input}, namely
+$B_{\rm con}=1.3\times10^{-85}$ at $\tau_L=10^{-85}$, which is
+\eqref{eq:lean-tableau}; the present instance with $B_{\rm con}=10^{-81}$ is
+checked in exact rational arithmetic but is not the one carried through Lean.
+As always this certifies the refinement budget in the exact-operation model,
+not physical construction tolerance.
 \end{remark}
 
-\section{Refinement versus cancellation}
-
-Classical polygonal approximation improves accuracy through refinement: replace $N$ by a larger scale such as $2N$. The N-series operator adds a second operation: compare two scales and cancel the leading asymptotic defect.
-
-\begin{figure}[h]
-\centering
-\begin{tikzpicture}[scale=0.95, every node/.style={font=\small}]
-    \draw[thick] (-5,0) rectangle (-1,3.8);
-    \node at (-3,3.35) {\textbf{Classical scheme}};
-    \node at (-3,2.75) {refinement only};
-    \node at (-3,2.0) {$P_N$};
-    \draw[->, thick] (-3,1.75) -- (-3,1.15);
-    \node at (-3,0.9) {$P_{2N}$};
-    \draw[->, thick] (-3,0.65) -- (-3,0.05);
-    \node at (-3,-0.25) {$\pi$ in the limit};
-    \node[align=center] at (-3,1.42) {$N^{-2}$ error\\shrinks by scale};
-
-    \draw[thick] (1,0) rectangle (7,3.8);
-    \node at (4,3.35) {\textbf{N-series scheme}};
-    \node at (4,2.75) {refinement + cancellation};
-    \node at (2.35,2.05) {$P_N$};
-    \node at (5.65,2.05) {$P_{kN}$};
-    \draw[->, thick] (2.75,1.95) -- (5.15,1.95);
-    \draw[->, thick] (2.75,1.75) -- (3.65,1.05);
-    \draw[->, thick] (5.25,1.75) -- (4.35,1.05);
-    \node[draw, rounded corners, align=center, inner sep=4pt] at (4,0.85)
-    {$\displaystyle \widehat P_N^{(k)}=P_{kN}+\frac{P_{kN}-P_N}{k^2-1}$};
-    \draw[->, thick] (4,0.45) -- (4,-0.1);
-    \node at (4,-0.35) {$\pi$ in the limit};
-    \node[align=center] at (4,1.48) {exact cancellation\\of the $N^{-2}$ term};
-\end{tikzpicture}
-\caption{Refinement versus cancellation. Classical polygonal approximation improves accuracy by increasing $N$. The N-series operator combines two scales so that the leading $N^{-2}$ term cancels exactly.}
-\label{fig:refinement-vs-cancellation}
-\end{figure}
-
-The distinction is structural. Refinement reduces the leading error term by making it smaller; cancellation removes that term from the accelerated sequence.
-
-\section{Three-scale acceleration}
-
-The same idea extends to higher order by combining more scales. The next case cancels both the $N^{-2}$ and $N^{-4}$ terms.
-
-\begin{theorem}[Three-scale N-series acceleration]
-\label{thm:three-scale}
-Suppose
-\[
-Q_N
-=
-Q+C_2N^{-2}+C_4N^{-4}+C_6N^{-6}+O(N^{-8}).
-\]
-Fix an integer $k>1$ and define
-\[
-\widehat Q_N^{(k,3)}
-=
-aQ_N+bQ_{kN}+cQ_{k^2N},
-\]
-where
-\[
-a=\frac{1}{(k^2-1)^2(k^2+1)},
-\qquad
-b=-\frac{k^2}{(k^2-1)^2},
-\qquad
-c=\frac{k^6}{(k^2-1)^2(k^2+1)}.
-\]
-Then
-\[
-\widehat Q_N^{(k,3)}=Q+O(N^{-6}).
-\]
-Thus the $N^{-2}$ and $N^{-4}$ terms are both cancelled exactly.
-\end{theorem}
-
-\begin{proof}
-Substituting the expansion at the three scales gives
-\[
-\begin{aligned}
-\widehat Q_N^{(k,3)}
-&=
-(a+b+c)Q \\
-&\quad+
-\left(a+\frac{b}{k^2}+\frac{c}{k^4}\right)C_2N^{-2} \\
-&\quad+
-\left(a+\frac{b}{k^4}+\frac{c}{k^8}\right)C_4N^{-4}
-+O(N^{-6}).
-\end{aligned}
-\]
-The displayed coefficients satisfy
-\[
-a+b+c=1,
-\qquad
-a+\frac{b}{k^2}+\frac{c}{k^4}=0,
-\qquad
-a+\frac{b}{k^4}+\frac{c}{k^8}=0.
-\]
-Therefore the limit term is preserved and the first two even-power errors vanish.
-\end{proof}
-
-\begin{corollary}[The dyadic three-scale operator]
-For $k=2$,
-\[
-\widehat Q_N^{(2,3)}
-=
-\frac{1}{45}Q_N-
-\frac{4}{9}Q_{2N}+\frac{64}{45}Q_{4N},
-\]
-and
-\[
-\widehat Q_N^{(2,3)}=Q+O(N^{-6}).
-\]
-\end{corollary}
-
-\section{General moment-cancellation form}
-
-The two-scale and three-scale operators are the first members of a general hierarchy.
-
-\begin{theorem}[General N-series moment cancellation]
-\label{thm:general-moment}
-Let
-\[
-Q_N=Q+\sum_{j=1}^{r-1}C_{2j}N^{-2j}+O(N^{-2r})
-\]
-and let $m_1,\ldots,m_r$ be distinct positive scale factors. Choose weights $w_1,\ldots,w_r$ satisfying
-\[
-\sum_{i=1}^r w_i=1,
-\qquad
-\sum_{i=1}^r \frac{w_i}{m_i^{2j}}=0
-\quad (j=1,\ldots,r-1).
-\]
-Then
-\[
-Q_N^{[r]}:=\sum_{i=1}^r w_i Q_{m_iN}
-\]
-satisfies
-\[
-Q_N^{[r]}=Q+O(N^{-2r}).
-\]
-\end{theorem}
-
-\begin{proof}
-Substitute the expansion of \(Q_{m_iN}\) into the weighted sum.  The condition
-\[
-\sum_i w_i=1
-\]
-preserves the limiting value \(Q\).  The moment conditions eliminate the
-coefficients of
-\[
-N^{-2},\quad N^{-4},\quad \ldots,\quad N^{-2(r-1)}.
-\]
-The first possible remaining term is therefore \(O(N^{-2r})\).
-\end{proof}
-
-\begin{remark}[Vandermonde structure]
-The coefficient equations form a Vandermonde-type linear system in the variables $m_i^{-2}$. Since the scale factors are distinct, the system is nonsingular and the weights are uniquely determined.
+\begin{remark}[Role of the finite-value check]
+The reproducibility report~\cite{baker-certification} records this theorem as
+the ninth of its numbered checks.  The change in the last tableau diagonal
+remains useful as a convergence diagnostic, but it is not used as an error
+bound; the cross-domain identity checks provide additional reproducibility
+evidence, and the finite-value enclosure proved here carries the rigorous
+certification.
 \end{remark}
 
-\section{Constructibility and scope}
+\subsection{Arbitrary-precision digit comparison}
 
-The word ``constructive'' is used here in the following finite-resolution sense. If the approximants $Q_N,Q_{kN},\ldots$ are available within a given geometric construction scheme, then the N-series operator uses only field operations on those constructed quantities. Since constructible lengths form a field, the weighted combinations appearing above remain constructible within that algebraic framework.
+The retained large-scale verification run used the \texttt{mpmath}
+arbitrary-precision library~\cite{mpmath} with a working precision set above the
+target output length.  Intermediate values were not deliberately truncated to displayed
+decimal strings; like every finite-precision computation, however, arithmetic
+was rounded according to the selected \texttt{mpmath} context.  The computed
+N-Series value was compared digitwise with a reference expansion generated by an
+separately generated Chudnovsky-series reference~\cite{chudnovsky}.
+The historical test report records agreement in the first
+$1{,}000{,}000$ decimal digits. The exact reference implementation, version,
+and output hashes have not been recovered for this run, so this comparison
+is reported as historical implementation evidence rather than a fully
+reproducible independent certification.  Unlike Theorem~\ref{thm:certified-canonical-value}, this
+large-target run is not presently accompanied by a million-digit a priori
+Richardson enclosure.
 
-For the exact classical straightedge-and-compass construction of regular polygons, not every integer scale is available from an arbitrary starting polygon. The dyadic case $k=2$ is the classical Archimedean refinement. Other scale choices, such as $k=3$, should be interpreted either as formal scale laws for the polygonal sequence or as acceleration laws applied within a separate approximate subdivision mechanism. The present theorem does not claim exact straightedge-and-compass construction of every regular $kN$-gon.
+This test has a specific interpretation:
+\begin{enumerate}
+  \item it detects implementation, indexing, coefficient, and precision errors
+        that would alter the decimal prefix;
+  \item it provides strong reproducibility evidence when accompanied by the
+        script, parameter record, software version, output hash, and reference
+        hash;
+  \item it does not prove $\pi_g=\pi$, because that equality is already supplied
+        by the limit-preservation theorem;
+  \item it does not by itself establish superiority over Chudnovsky or other
+        state-of-the-art algorithms in arithmetic complexity or wall-clock
+        time.
+\end{enumerate}
 
-Thus the scope of the paper is precise:
-\begin{itemize}
-\item the limiting value remains the classical $\pi$;
-\item the polygonal even-power expansion supplies the structural input;
-\item the N-series operator cancels leading error terms exactly at the sequence level;
-\item constructibility is inherited whenever the required scale approximants are themselves available in the chosen geometric framework.
-\end{itemize}
+A publication archive should therefore retain the exact target precision,
+guard-digit setting, N-Series depth, coefficient-generation method, software
+version, elapsed time, and cryptographic hashes of the compared outputs.
 
-\section{Numerical illustration}
+% -----------------------------------------------------------
+\section{Scope, limitations, and open problems}
 
-For $k=2$, the accelerated sequence is
-\[
-\widehat P_N^{(2)}=P_{2N}+\frac{P_{2N}-P_N}{3}.
-\]
-The following values illustrate the reduction from second-order to fourth-order error. Values are rounded decimal evaluations of the exact formulas above.
+\subsection{Scale factor versus geometric constructibility}
 
-\begin{center}
-\begin{tabular}{rrrr}
-\toprule
-$N$ & $P_N$ & $|\pi-P_N|$ & $|\pi-\widehat P_N^{(2)}|$ \\
-\midrule
-$6$  & $2.9999999999999996$ & $1.4159265358979356\times10^{-1}$ & $4.879319494612844\times10^{-4}$ \\
-$12$ & $3.1058285412302490$ & $3.576411235954424\times10^{-2}$ & $3.068295822572509\times10^{-5}$ \\
-$24$ & $3.1326286132812378$ & $8.964040308555354\times10^{-3}$ & $1.9206210501998555\times10^{-6}$ \\
-$48$ & $3.1393502030468667$ & $2.2424505429263775\times10^{-3}$ & $1.2008473637692418\times10^{-7}$ \\
-$96$ & $3.1410319508905093$ & $5.60702699283766\times10^{-4}$ & $7.506014032543362\times10^{-9}$ \\
-\bottomrule
-\end{tabular}
-\end{center}
+The analytic raw scale law and the extrapolation operator are valid for any
+fixed real scale factor $m>1$ for which the required sequence values are
+available.  A finite straightedge-and-compass realization is a separate
+question.  In particular, the existence of an analytic $m$-scale formula does
+not imply exact constructibility of a general $m$-section of an arbitrary
+angle.
 
-The fourth column decreases by approximately a factor of $16$ when $N$ doubles, consistent with the $O(N^{-4})$ theorem.
+\subsection{Local versus global cubic refinement}
 
-\section{A \texorpdfstring{\(\pi\)-free}{pi-free} computational verification}
-\label{sec:pi-free-verification}
+Equation~\eqref{eq:Dexpansion} is a local statement.  The residual refinement
+has cubic convergence after the residual enters a sufficiently small
+admissible neighborhood.  A global convergence theorem would additionally
+require an invariant angular domain, branch control for inverse trigonometric
+operations, and proof that the chosen seed enters the local basin.  No global
+claim is required for the finite high-precision computations reported here,
+where the residual can be evaluated and bounded directly.
 
-The numerical illustration above evaluates \(P_N\) through the sine function,
-which presupposes \(\pi\).  To confirm the acceleration on data generated
-geometrically, with no appeal to \(\pi\) at any stage, one may build the
-approximating polygons by repeated trisection.
+\subsection{Geometric asymptotics beyond the circle}
 
-Starting from an algebraic chord seed, each refinement triples the side count
-by passing from an \(N\)-gon to a \(3N\)-gon.  Analytically one may write the
-stored quantity as
-\[
-c_N=\sin\left(\frac{\pi}{N}\right),
-\]
-but this formula is not used to generate the sequence.  The computation stores
-only chord half-lengths.  The new chord half-length is obtained as the small
-positive root of the algebraic chord-trisection equation
-\[
-4u^3-3u+c_N=0,
-\qquad
-u=c_{3N}.
-\]
-No transcendental constant enters the generation process: the seeds are
-algebraic and every subsequent length is obtained by solving a cubic over the
-previously constructed lengths.  The inscribed half-perimeter approximation is
-then
-\[
-P_N=Nc_N.
-\]
-The reference value of \(\pi\) is used only after the construction, to count
-the number of verified decimal digits.
+For the circle, the even-power expansion follows immediately from the sine
+series.  Extending the same N-Series mechanism to a broader class of smooth
+curves requires a separate theorem establishing the appropriate chordal
+perimeter expansion and its regularity assumptions.  The cancellation operator
+is conditional on that expansion; it does not create the expansion by itself.
 
-Applying the multi-scale operator with \(k=3\) to a ladder of trisection
-levels produces the measured accuracy shown in
-Table~\ref{tab:pi-free-verification}.  The raw column uses the
-triangle-seeded chord ladder; each accelerated value is verified against an
-independently computed reference.
+\subsection{Constructed inputs versus algebraic inputs}
 
-\begin{table}[h]
+Theorem~\ref{thm:certified-canonical-value} is a statement about the algebraic
+lane: its eleven inputs come from \eqref{eq:cubic-tripling} and $B_{\rm num}$
+bounds the root-solve error, so no construction error is present to omit.
+Corollary~\ref{cor:eleven-input} is the corresponding statement for the
+constructible lane, and it is a distinct result with its own allowance
+$B_{\rm con}$.  A published enclosure should state which lane it refers to; the
+two are not interchangeable, and only the latter carries a straightedge-and-compass
+interpretation.
+
+\subsection{Computational complexity}
+
+Tripling has a provable per-level advantage over doubling because it advances
+more rapidly through the scale variable.  This does not determine total runtime.
+A fair computational comparison must use matched implementations, identical
+precision targets, equivalent certification requirements, and a cost model for
+large-number arithmetic and coefficient generation.  The approximately one-day
+million-digit run is therefore reported as a verification computation, not as
+a benchmark proving a fixed runtime ratio.  The exact-rational R9 machinery
+certifies the canonical $80$-decimal result; extending the same enclosure to a
+million-digit target is a separate scale-up problem rather than an unresolved
+logical gap in the finite certificate.
+
+% -----------------------------------------------------------
+\section{Formal verification in Lean 4}
+\label{sec:lean}
+
+A companion formal development verifies key mathematical components of the
+N-Series framework in Lean~4~\cite{lean4} with Mathlib~\cite{mathlib}. The
+integrated development comprises $28$ modules, organized in dependency groups
+that the source labels $A$ through $E$, and
+built successfully with Lean~4.36.0-rc2 against Mathlib revision
+\texttt{9d581dfff2e41de989072ea63abf3daf69311520}; its release audit
+reported 112 named declarations and only the standard foundational axioms
+\texttt{propext}, \texttt{Classical.choice}, and \texttt{Quot.sound}.
+The precise, publicly available source revision is
+\url{https://github.com/CWBaker360/nseries-lean-verification/tree/bf262aaf52a12001ca64545757d758b507b09a18}.
+The successful local build used pinned dependency build caches; an independent
+fresh-clone reproduction on a separate machine is not claimed.
+
+Table~\ref{tab:lean} summarizes representative results of the companion
+formalization. The theorem and corollary identifiers in the original standalone
+verification note follow that note's own numbering; this table identifies the
+corresponding mathematical content without imposing that numbering on the
+present manuscript.
+
+The companion development uses its own notation, which maps onto the notation of
+this paper as follows.  Its scale parameter $k$ plays the role of the scale
+factor $m$ of \eqref{eq:Rop}; its $\widehat P_N^{(k,3)}$ is the three-scale
+member of the multiscale family $\Rmulti_{m,s}$ of \eqref{eq:multi-operator}
+with $m=k$ and $s=2$; and its $\pi_g^{(k)}$ is the accelerated limit
+$\lim_j\Rop_m[P]_{m^jN_0}$ of Section~\ref{sec:pig}, written there as $\pi_g$
+when the scale is fixed.  ``Intrinsic'' refers to the $\pi$-free polygonal
+definition displayed below, and ``dyadic'' to the specialization $k=2$.
+
+\begin{table}[htbp]
 \centering
-\begin{tabular}{ccc}
+\small
+\begin{tabular}{@{}p{0.42\linewidth}p{0.51\linewidth}@{}}
 \toprule
-Trisection levels \(L\) & Raw half-perimeter & Accelerated \(k=3\) N-series \\
+Verified mathematical content & Lean declaration \\
 \midrule
-\(60\)  & \(57\) digits  & \(1{,}948\) digits \\
-\(95\)  & \(90\) digits  & \(4{,}705\) digits \\
-\(152\) & \(145\) digits & \(11{,}199\) digits \\
+Sine expansion and explicit remainder & \texttt{nseries\_sine\_remainder\_bound} \\
+General two-scale bound & \texttt{two\_scale\_general\_bound} \\
+Polygonal Richardson bound & \texttt{richardson\_error\_bound} \\
+Accelerated limit equals $\pi$ & \texttt{acceleratedPi\_eq\_pi} \\
+Three-scale bound and sharp term & \texttt{three\_scale\_error\_bound}, \texttt{three\_scale\_sharp} \\
+Sharp dyadic three-scale term & \texttt{dyadic\_three\_scale\_sharp} \\
+General moment cancellation & \texttt{general\_moment\_cancellation} \\
+Moment-weight existence and uniqueness & \texttt{nseries\_weights\_existsUnique}, \texttt{moment\_weights\_unique} \\
+Lagrange weights & \texttt{lagrange\_weights\_moments}, \texttt{lagrange\_weight\_formula} \\
+Trisection cubic root uniqueness & \texttt{chordHalf\_trisection\_unique} \\
+Intrinsic polygonal limit & \texttt{polygonalPi\_eq\_pi} \\
+Intrinsic two-scale bound & \texttt{intrinsic\_two\_scale\_bound} \\
+Intrinsic dyadic sharp term & \texttt{intrinsic\_dyadic\_three\_scale\_sharp} \\
+\midrule
+\multicolumn{2}{@{}l}{\emph{Constructible ladder, Section~\ref{subsec:ladder}}}\\
+Inheritance identity (Prop.~\ref{prop:inheritance}) & \texttt{err\_succ}, \texttt{ladderM\_mul\_err} \\
+Exact hexagonal start & \texttt{ladderM\_mul\_err\_of\_exact\_start}, \texttt{err\_zero\_of\_hex\_start} \\
+Per-level budget at every level & \texttt{abs\_ladderM\_mul\_err\_le} \\
+Perimeter transfer (Lemma~\ref{lem:transfer}) & \texttt{sin\_ladder\_dist\_le} \\
+Finite-target bounds (Thm.~\ref{thm:finite-target}) & \texttt{finite\_target\_ladder} \\
+Weighted tableau perturbation & \texttt{constructible\_tableau\_from\_ladder} \\
+Eleven-input instance (Cor.~\ref{cor:eleven-input}) & \texttt{constructible\_tableau\_eleven\_inputs} \\
+Canonical weights are the Lagrange weights & \texttt{canonicalWeight\_eq\_lagrangeWeight} \\
+$\sum_j\abs{w_j}\le13/10$, $\sum_jw_j=1$ & \texttt{canonicalWeight\_abs\_sum\_le}, \texttt{canonicalWeight\_sum} \\
+Canonical constructible tableau & \texttt{canonical\_constructible\_tableau} \\
+\midrule
+\multicolumn{2}{@{}l}{\emph{Seed bounds and the refinement schedule}}\\
+Lemma~\ref{lem:seed-bounds}, defect half & \texttt{seedDefect\_pos}, \texttt{seedDefect\_le} \\
+The identity \eqref{eq:F-identity} & \texttt{F\_eq\_neg\_seedDefect} \\
+Lemma~\ref{lem:seed-bounds}, $F$ half & \texttt{abs\_seedF\_le} \\
+Majorant recurrence $b_{j+1}=b_j^3/3$ & \texttt{bseq\_le\_half}, \texttt{cubicIter\_bound} \\
+Iteration bound at the seed & \texttt{residual\_bound\_one\_level} \\
+Bootstrap of the level input & \texttt{bootstrap\_input} \\
+Thm.~\ref{thm:finite-target}, unconditional & \texttt{sched\_certified} \\
+Schedule of Rem.~\ref{rem:ladder-instance} & \texttt{canonicalSchedule\_clears\_budget} \\
+$M_{10}\abs{e_{10}}\le10^{-85}$ & \texttt{canonical\_ladder\_certified} \\
+Per-level residuals & \texttt{canonical\_residual\_bounds} \\
+$\abs{\widetilde T_{10}-T_{10}}\le1.3\times10^{-85}$ & \texttt{canonical\_tableau\_certified} \\
+Combined, given $B_{\rm an}$ & \texttt{canonical\_tableau\_vs\_pi} \\
 \bottomrule
 \end{tabular}
-\caption{A \(\pi\)-free verification of the scale-\(3\) N-series acceleration.
-The polygonal data are generated by an algebraic chord-trisection recurrence;
-\(\pi\) is used only afterward to count verified digits.}
-\label{tab:pi-free-verification}
+\caption{Selected mathematical statements and their Lean formalizations.}
+\label{tab:lean}
 \end{table}
 
-Two features are worth stating precisely.  First, the construction is genuinely
-\(\pi\)-free: the digits are produced by an algebraic trisection recurrence
-seeded by \(\sqrt{3}\), and \(\pi\) is used only afterward to count the correct
-digits.  Second, the operator is not a fixed-order scheme.  Each additional
-level raises the order of cancellation, so the order of convergence is
-unbounded and the number of correct digits grows quadratically in the number
-of levels, in contrast to the linear growth of raw Archimedean refinement and
-of any fixed-order accelerator.  In each run above, the attainable accuracy was
-limited only by the working arithmetic precision, not by the resolution of the
-geometry: the method is precision-limited, not resolution-limited.
+Four points of scope should be stated precisely.
 
-\paragraph{Independent implementation cross-check.}
-As an additional verification, the computation was performed by two independent
-\(\pi\)-free implementations.  One implementation used a triangle seed,
+\emph{Explicit bounds.} The asymptotic statements are verified in
+explicit-constant form. For example, the sine expansion is proved as
 \[
-c_3=\frac{\sqrt{3}}{2},
-\qquad
-3\to 9\to 27\to\cdots,
+\left|N\sin\frac{\pi}{N}
+-\Bigl(\pi-\frac{\pi^3}{6N^2}+\frac{\pi^5}{120N^4}-\frac{\pi^7}{5040N^6}\Bigr)\right|
+\le \frac{\pi^9}{362880\,N^8}
+\qquad (N>0),
 \]
-while the second used a hexagon seed,
+and the three-scale operator is shown to satisfy
 \[
-c_6=\frac{1}{2},
-\qquad
-6\to 18\to 54\to\cdots.
+\widehat P_N^{(k,3)}=\pi-\frac{\pi^7}{5040\,k^6N^6}+O(N^{-8})
 \]
-Both implementations advanced the polygon sequence by solving the algebraic
-chord-trisection equation
+with an explicit constant. The general two-scale and moment-cancellation results are formalized under an
+explicit remainder hypothesis $|q(M)-Q-\cdots|\le B/M^{p}$ rather than a
+big-$O$ hypothesis; the Lean statements are therefore quantitative versions
+of the corresponding mathematical statements, not verbatim transcriptions of this manuscript.
+
+\emph{The polygonal limit.} The half-perimeter of the regular $n$-gon is
+defined in Lean without reference to $\pi$, as
 \[
-4u^3-3u+c_N=0,
-\qquad
-u=c_{3N},
+\frac{n}{2}\min_{\substack{z^n=1\\ z\ne 1}}|1-z| \qquad (n\ge 3),
 \]
-and both applied the scale-\(3\) N-series acceleration tableau.  The two
-independently generated digit strings agreed through the first \(100{,}000\)
-decimal digits.
+and the limit of this sequence is proved to equal $\pi$. The definition is
+$\pi$-free; the proof of the identification uses the classical constant.
+This is the raw polygonal limit, distinct from the accelerated limit
+$\pi_g^{(k)}$ of the accelerated N-Series construction (the $\pi_g$ of
+Section~\ref{sec:pig}), which is verified separately.
+The companion development proves acceleration bounds for the analytic sequence
+$N\sin(\pi/N)$, and the intrinsic half-perimeter is proved equal to that
+sequence for $n\ge 3$. Two of the bounds are also stated and verified
+directly for the intrinsic sequence: the two-scale bound
+for integer $k\ge 2$, and the sharp bound for the dyadic three-scale approximation. The remaining bounds (the general-$k$ three-scale bound and
+the accelerated-limit theorem) have not been restated for the
+intrinsic sequence.
 
-In the hexagon-seeded run, the per-step trisection certificate reported
-maximum cubic residual below
+\emph{What is not verified.} The digit tables in the numerical-verification section, the high-precision implementation comparisons, and the observed
+growth of correct digits with the number of levels are
+computational evidence, not formally verified theorems. For the trisection
+recurrence, Lean verifies the cubic identity and the uniqueness of its root
+in $[0,\tfrac12]$ for $N\ge 2$, not the numerical runs.  That enclosure is
+deliberately weaker than
+Proposition~\ref{prop:unique-cubic-branch}, which localizes the selected branch
+to $(0,c/2)$; the formalized statement is the coarser of the two, and the
+sharper interval is not currently part of the Lean development.
+
+\emph{The constructible ladder.}  Section~\ref{subsec:ladder} and
+Corollary~\ref{cor:eleven-input} are formalized in a separate standalone
+development, audited declaration by declaration to the same three foundational
+axioms.  The ledger is as follows.
+
+The residuals are not abstract: the chain is unconditional for the construction
+actually described in Section~\ref{subsec:ladder}.
+
+\emph{Verified.}  The inheritance identity \eqref{eq:inheritance} in both forms,
+and the vanishing of the inherited term at an exact hexagonal start.  The
+perimeter-transfer inequality $\abs{\widetilde P_N-P_N}\le N\abs{\eta_N}$ of
+Lemma~\ref{lem:transfer}.  Theorem~\ref{thm:finite-target}, in a form parametric
+in the bootstrap constant $C$ of \eqref{eq:bootstrap-constant}, and including
+the stronger conclusion that the budget bounds the scaled error at \emph{every}
+level $j\le L$ rather than only at the target level --- which is what allows a
+single ladder to serve all eleven tableau inputs.  Lemma~\ref{lem:seed-bounds}
+in full on the range $(0,\tfrac32]$, together with the identity
+\eqref{eq:F-identity} from which its $F$ half is obtained.  The majorant
+recurrence $b_{j+1}=b_j^3/3$ and the iteration bound
+$\abs{F^{\circ k}(d)}\le b_k$.  The bootstrap: a scaled-error bound of $\tau_L$
+places the level input inside $(0,C/M_i]$, so the rational majorant
+\eqref{eq:seed-majorant} is admissible.  The schedule of
+Remark~\ref{rem:ladder-instance} at $C=\tfrac{401}{100}$, discharged by exact
+rational arithmetic at all ten levels, giving
+\begin{equation}
+  M_{10}\abs[\big]{\widehat x_{10}-\pi/M_{10}}\le10^{-85}
+  \label{eq:lean-ladder}
+\end{equation}
+with no assumed residual budget.  The per-level bounds
+$\abs{r_j}\le10^{-85}/(10M_j)$ for $1\le j\le10$, which do \emph{not} follow
+from \eqref{eq:lean-ladder} --- a bound on the accumulated error says nothing
+about the individual residuals --- and are proved separately from the schedule's
+majorants.  The canonical eleven-weight vector, proved equal to the Lagrange
+weights $\prod_{k\ne i}x_k/(x_k-x_i)$ at the nodes $x_j=(6\cdot3^j)^{-2}$,
+normalized to $\sum_jw_j=1$ and majorized by $\sum_j\abs{w_j}\le13/10$ in exact
+rational arithmetic.  And the construction-perturbation component of
+Corollary~\ref{cor:eleven-input} at that schedule,
+\begin{equation}
+  \abs[\big]{\widetilde T_{10}-T_{10}}\le1.3\times10^{-85}.
+  \label{eq:lean-tableau}
+\end{equation}
+
+\emph{Not formalized.}  Proposition~\ref{prop:one-refinement-fails}, whose
+ingredients are now available but which has not been assembled; and
+Theorem~\ref{thm:certified-canonical-value}.  The latter is the single remaining
+obligation, and the development states it as an explicit hypothesis rather than
+leaving it implicit: supplying any $B_{\rm an}$ with
+$\abs{T_{10}-\pi}\le B_{\rm an}$ yields
+$\abs{\widetilde T_{10}-\pi}\le1.3\times10^{-85}+B_{\rm an}$, and at the value
+$B_{\rm an}=3.40628574228490542\times10^{-81}$ of
+Theorem~\ref{thm:certified-canonical-value} that total is below $10^{-80}$, so
+the $80$-decimal threshold is preserved on the constructible lane.
+Theorem~\ref{thm:certified-canonical-value} is \emph{proved} in this paper by
+exact rational interval propagation and a closed sine remainder; the absence of
+a formalization is not a gap in that proof.
+
+\emph{Weights.} The companion Vandermonde formalization establishes existence and
+uniqueness of the moment weights at distinct nodes. Separately, the explicit
+Lagrange-basis weights
 \[
-1.3\times 10^{-100126},
+w_i=\prod_{k\ne i}\frac{-x_k}{x_i-x_k}
 \]
-with maximum derivative root-error bound below
+are proved to satisfy the moment system. These results certify each finite
+moment-cancellation system, not a uniform digit-growth rate as the number of
+levels increases.
+
+\begin{remark}[A hypothesis removed by formalization]
+\label{rem:lean-hypothesis}
+An earlier draft stated Theorem~\ref{thm:finite-target} under
+$0<\tau_L\le10^{-2}$.  The Lean development establishes the corresponding bound
+with no upper constraint on $\tau_L$ whatever, which exposed the condition as
+unused in that theorem's own proof: it is required only by the bootstrap of the
+explicit correction-count rule, and it is now stated there as
+\eqref{eq:tau-small}.  Corollary~\ref{cor:eleven-input} is correspondingly free
+of any restriction on $B_{\rm con}$.  The formal statement also carries the
+hypothesis $L\ge1$ of Theorem~\ref{thm:finite-target} explicitly, the budget
+\eqref{eq:budget} being undefined at $L=0$.
+\end{remark}
+
+\begin{remark}[Why the bootstrap constant is a parameter]
+\label{rem:lean-constant}
+The constant $C=\tfrac{16}{5}$ is perfectly admissible as mathematics: it
+follows from $\pi<22/7$, which is classical and elementary.  The reason the
+formal instance uses $C=\tfrac{401}{100}$ is narrower than that.  Among numeric
+bounds on $\pi$, the Mathlib revision used here offers only $3<\pi$ and
+$\pi<4$ as named results; a formal proof of $\pi<22/7$ would have to be
+supplied, and was judged not worth the effort for a constant that only affects
+one refinement count.  Hard-coding $\tfrac{16}{5}$ in
+\eqref{eq:bootstrap-constant} would meanwhile have made a published constant ---
+and with it the schedule of Remark~\ref{rem:ladder-instance} --- depend on which
+bounds a library happens to expose.  Theorem~\ref{thm:finite-target} is
+accordingly formalized for every $C$ satisfying \eqref{eq:bootstrap-constant},
+with the instance supplying $C=\tfrac{401}{100}$ from $\pi<4$ alone; given a
+formal $\pi<22/7$ the same development yields the shorter schedule with no
+change to any theorem.  This is the second hypothesis the formalization has
+relocated rather than merely confirmed; see
+Remark~\ref{rem:lean-hypothesis}.
+\end{remark}
+
+The reported endpoint axiom audits list only \texttt{propext}, \texttt{Classical.choice},
+and \texttt{Quot.sound}; no \texttt{sorry}, \texttt{admit}, or additional axioms were reported
+in the audited modules.
+
+
+% -----------------------------------------------------------
+\section{Conclusion}
+
+For the inscribed polygonal approximation
+$P_N=N\sin(\pi/N)$, raw tripling and raw doubling inherit their convergence
+factors directly from the leading $N^{-2}$ error law.  Tripling reduces the
+leading error by a factor approaching $9$ per scale level, compared with $4$
+for doubling, and gains $\log 3/\log 2\approx1.58496$ times as many decimal
+digits per level.  After twelve matched stages from a hexagon, the exact
+tripling reference sequence is approximately $1.6834\times10^4$ more accurate
+than the doubling sequence.
+
+The higher-order result comes from scale cancellation.  The operator
 \[
-4.4\times 10^{-100127}.
+  \Rop_3[P]_N=\frac{9P_{3N}-P_N}{8}
 \]
-Thus the reported agreement is supported both by independent implementation
-agreement and by a full-precision certificate for the chord-trisection solves.
+annihilates the $N^{-2}$ mode and produces fourth-order convergence.  Higher
+N-Series columns are standard multiscale extrapolation combinations applied to
+the even-power polygonal expansion.
 
-\section{Relation to Richardson extrapolation}
-\label{sec:richardson}
-
-Algebraically, Theorem~\ref{thm:two-scale} is a Richardson-type cancellation
-of the leading error term \cite{richardson,stoer-bulirsch}.  The distinction
-made here is interpretive and geometric: the even-power expansion arises from
-the chord symmetry of the polygonal construction, and the cancellation
-operator acts directly on the resulting polygonal approximation sequence.
-
-The N-series framework therefore does not replace classical extrapolation
-theory.  Rather, it identifies a natural geometric source for the hypotheses
-that make such extrapolation exact at the asymptotic level.  In this sense the
-paper is expository: the algebraic cancellation is standard, while the
-geometric contribution is the isolation of the polygonal even-power structure
-and its finite-resolution interpretation.
-
-\section{Summary and conclusion}
-\label{sec:summary-conclusion}
-
-The polygonal approximation sequence
+The geometric interpretation requires care.  Exact analytic regular polygons
+serve as the reference sequence; finite Baker stages provide constructible
+chord approximations to the required central angles.  The perturbation bound
 \[
-P_N=N\sin\left(\frac{\pi}{N}\right)
+  \abs{\widetilde P_N-P_N}\le N\abs{\eta_N}
 \]
-has an even-power error expansion:
+specifies exactly how the angular residual must be controlled for the raw or
+accelerated asymptotic law to remain visible.  Under vanishing residual, the
+constructible chord sequence approaches the same limit as the Archimedean
+sequence.
+
+Accordingly, the geometric constant $\pi_g$ is not numerically distinct from
+$\pi$: equality follows from the classical polygonal limit and preservation of
+that limit by the N-Series operators.  In addition, the canonical eleven-input
+computation is no longer supported only by a last-diagonal stabilization
+indicator.  Exact rational root intervals, exact tableau propagation, and a
+closed sine-remainder bound prove
 \[
-P_N
-=
-\pi
--
-\frac{\pi^3}{6N^2}
-+
-\frac{\pi^5}{120N^4}
--
-\frac{\pi^7}{5040N^6}
-+
-O(N^{-8}).
+  \abs{\widehat\pi_g-\pi}
+  <3.406285758314118\times10^{-81}.
 \]
-This symmetry-induced structure permits exact cancellation of the leading
-term through the two-scale N-series operator
-\[
-\widehat P_N^{(k)}
-=
-P_{kN}+\frac{P_{kN}-P_N}{k^2-1}.
-\]
-For every fixed integer \(k>1\),
-\[
-\widehat P_N^{(k)}
-=
-\pi
-+
-O(N^{-4}),
-\]
-and the accelerated geometric limit satisfies
-\[
-\pi_g^{(k)}=\pi.
-\]
+The million-digit comparison is retained as a large-scale verification of the
+implementation and coefficient pipeline, not as the logical basis for
+$\pi_g=\pi$ or as a million-digit formal certificate.
 
-More generally, the same moment-cancellation principle produces a hierarchy
-of multi-scale operators that cancel successive even-power error terms.  The
-two-scale operator cancels the \(N^{-2}\) term, the three-scale operator
-cancels the \(N^{-2}\) and \(N^{-4}\) terms, and the general \(r\)-scale form
-cancels the first \(r-1\) even-power terms.
+% -----------------------------------------------------------
+\section*{Data and code availability}
 
-The result does not alter the classical value of \(\pi\).  Instead, it gives a
-finite-resolution acceleration law for polygonal approximation: refinement
-decreases the leading error, while cross-scale cancellation removes that
-leading error from the accelerated sequence.
+The manuscript is distributed with the Python source, coefficient files,
+reproducibility notes, numerical tables, and checksums in the public research
+repository
+\begin{center}
+\url{https://github.com/CWBaker360/N-Series-pi-acceleration}.
+\end{center}
+The frozen certification snapshot for Theorem~\ref{thm:certified-canonical-value}
+is stored under
+\begin{center}
+\texttt{verification/certified\_richardson\_v3\_0/}
+\end{center}
+and contains the oracle-free construction kernel, exact rational certification
+module, verification driver, unit tests, canonical outputs, proof report, and
+SHA-256 package manifest.  The Lean~4 development is archived separately
+at~\cite{nseries-lean}, with the additional frozen November 15 constructive-ladder
+sources and audit evidence in the research repository under
+\texttt{verification/constructible-ladder-2026-11-15/}. The July 2026
+Richardson verification report is also available in the certification directory.
+These public GitHub revisions are not represented here as new Zenodo deposits
+or DOI-issued manuscript releases.
 
-The \(\pi\)-free computational verification shows that the acceleration can be
-tested on polygonal data generated algebraically from chord half-lengths,
-without using \(\pi\) in the construction of the sequence itself.  In that
-verification, \(\pi\) is used only afterward as an external reference to count
-verified digits.
+The original \texttt{SHA256SUMS.txt} at repository root predates the present
+verification directories and is not used as a checksum certificate for the
+November manuscript. The independently verified numerical package has its own
+\texttt{PACKAGE\_MANIFEST.json}, which records one missing supplementary file
+(\texttt{REQUIREMENTS.txt}), and the Lean checkpoint has a separate freeze
+manifest. Reproducing the numerical result requires the pinned environment and
+the verification instructions in those directories.
 
-All cancellation formulas used in the polygonal case have been derived here
-directly from the even-power expansion of \(P_N\).  Thus the note is
-self-contained and does not require a broader companion framework.  Its
-purpose is not to claim a new extrapolation theory, but to give a geometric
-reading of a standard Richardson-type cancellation mechanism in the concrete
-setting of polygonal approximation.
+\section*{Acknowledgments}
 
-\begin{thebibliography}{9}
+The author thanks Rouben Rostamian for his independent analysis of the initial
+Baker approximate-trisection construction and for hosting an interactive
+geometric presentation of the construction on his UMBC webpage~\cite{rostamian}.  This
+acknowledgment does not imply institutional affiliation with UMBC.
 
-\bibitem{archimedes-heath}
+% -----------------------------------------------------------
+\begin{thebibliography}{99}
+
+\bibitem{archimedes}
 Archimedes,
-\emph{Measurement of a Circle},
-in \emph{The Works of Archimedes}, edited by T.~L. Heath,
-Cambridge University Press, Cambridge, 1897.
+\textit{Measurement of a Circle},
+in T. L. Heath (ed.), \textit{The Works of Archimedes},
+Cambridge University Press, 1897.
 
-\bibitem{richardson}
-L.~F. Richardson,
-``The approximate arithmetical solution by finite differences of physical
-problems involving differential equations, with an application to the stresses
-in a masonry dam,''
-\emph{Philosophical Transactions of the Royal Society of London. Series A},
-210 (1911), 307--357.
+\bibitem{baker-trisection}
+W. Baker,
+``A Constructible Cubic Error Cascade for Approximate Angle Trisection,''
+preprint and research source archive, 2026.
 
-\bibitem{stoer-bulirsch}
-J.~Stoer and R.~Bulirsch,
-\emph{Introduction to Numerical Analysis}, 3rd ed.,
-Texts in Applied Mathematics, vol.~12,
-Springer, New York, 2002.
+\bibitem{baker-proportional}
+W. Baker,
+``A Local Cubic Refinement Law for Proportional-Subtended Angle Division,''
+preprint and research source archive, 2026.
 
-\bibitem{baker-cascade}
-W.~Baker,
-\emph{A Constructive Cubic Error Cascade for Approximate Angle Trisection},
-working manuscript, 2026.
+\bibitem{chudnovsky}
+D. V. Chudnovsky and G. V. Chudnovsky,
+``The Computation of Classical Constants,''
+\textit{Proceedings of the National Academy of Sciences of the United States
+of America}, 86(21) (1989), 8178--8182.
+\url{https://doi.org/10.1073/pnas.86.21.8178}.
+
+\bibitem{richardson-gaunt}
+L. F. Richardson and J. A. Gaunt,
+``The Deferred Approach to the Limit. Part I. Single Lattice. Part II.
+Interpenetrating Lattices,''
+\textit{Philosophical Transactions of the Royal Society of London. Series A},
+226 (1927), 299--361.
+\url{https://doi.org/10.1098/rsta.1927.0008}.
+
+\bibitem{romberg}
+W. Romberg,
+``Vereinfachte numerische Integration,''
+\textit{Det Kongelige Norske Videnskabers Selskabs Forhandlinger},
+28 (1955), 30--36.
+
+\bibitem{rostamian}
+R. Rostamian,
+``An Angle Trisection,''
+University of Maryland, Baltimore County, interactive geometric note.
+\url{https://userpages.umbc.edu/~rostamia/Geometry/trisect-baker.html}
+(accessed July 2026).
+
+\bibitem{baker-certification}
+W. Baker,
+``Certified Oracle-Free Construction and Cross-Domain Verification of
+Baker's Geometric $\pi_g$ Approximation,''
+Version 3.0 reproducibility report, 2026.
+
+\bibitem{lean4}
+L. de Moura and S. Ullrich,
+``The Lean 4 Theorem Prover and Programming Language,''
+in \textit{Automated Deduction -- CADE 28},
+Lecture Notes in Computer Science 12699, Springer, 2021, 625--635.
+\url{https://doi.org/10.1007/978-3-030-79876-5_37}.
+
+\bibitem{mathlib}
+The mathlib Community,
+``The Lean Mathematical Library,''
+in \textit{Proceedings of the 9th ACM SIGPLAN International Conference on
+Certified Programs and Proofs (CPP 2020)},
+ACM, 2020, 367--381.
+\url{https://doi.org/10.1145/3372885.3373824}.
+
+\bibitem{mpmath}
+F. Johansson and others,
+\textit{mpmath: a Python library for arbitrary-precision floating-point
+arithmetic}.
+\url{https://mpmath.org}
+(version 1.3.0 for the independently reproduced 120-decimal canonical
+certification; version of the earlier million-digit run not recorded).
+
+\bibitem{nseries-lean}
+W. Baker,
+``N-Series Lean 4 Verification,''
+source archive, 2026.
+\url{https://github.com/CWBaker360/nseries-lean-verification}.
+
+\bibitem{wantzel}
+P. Wantzel,
+``Recherches sur les moyens de reconna\^\i tre si un probl\`eme de g\'eom\'etrie
+peut se r\'esoudre avec la r\`egle et le compas,''
+\textit{Journal de Math\'ematiques Pures et Appliqu\'ees}, 2 (1837), 366--372.
 
 \end{thebibliography}
 

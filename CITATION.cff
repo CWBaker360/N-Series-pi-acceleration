@@ -1,25 +1,24 @@
 cff-version: 1.2.0
 message: "If you use or discuss this work, please cite the paper listed under preferred-citation."
-title: "A Constructive N-Series Acceleration Law for Polygonal Approximation of π"
+title: "Certified Constructive N-Series Acceleration for Polygonal Approximation of π"
 type: software
 
 authors:
   - family-names: "Baker"
     given-names: "Wayne"
 
-version: "1.0.2"
-date-released: 2026-07-23
+# Revised manuscript committed to main; no new tagged software release is asserted.
 
 repository-code: "https://github.com/CWBaker360/N-Series-pi-acceleration"
 url: "https://github.com/CWBaker360/N-Series-pi-acceleration"
 
 abstract: >-
   This repository contains the manuscript source and supporting materials for
-  a constructive N-Series acceleration law for polygonal approximation of pi.
-  The paper gives a geometric interpretation of Richardson-type cancellation,
-  derives the even-power error structure, proves two-scale and multiscale
-  cancellation laws, and records a pi-free algebraic chord-trisection
-  verification.
+  the November 15, 2026 certified constructive N-Series manuscript and
+  reproducibility evidence. The revision separates classical Richardson
+  cancellation, algebraic chord tripling, and exact-operation constructible
+  approximation; it includes an 80-decimal exact-rational certificate and
+  a separately verified Lean constructive-ladder checkpoint.
 
 keywords:
   - "polygonal approximation"
@@ -32,7 +31,7 @@ keywords:
 
 preferred-citation:
   type: article
-  title: "A Constructive N-Series Acceleration Law for Polygonal Approximation of π"
+  title: "Certified Constructive N-Series Acceleration for Polygonal Approximation of π"
   authors:
     - family-names: "Baker"
       given-names: "Wayne"

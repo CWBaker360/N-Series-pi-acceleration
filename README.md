@@ -4,27 +4,27 @@
        width="760">
 </p>
 
-# A Constructive N-Series Acceleration Law for Polygonal Approximation of π
+# Certified Constructive N-Series Acceleration for Polygonal Approximation of π
 
 **Author:** Wayne Baker  
-**Date:** July 3, 2026  
+**Manuscript revision:** November 15, 2026  
 **Status:** Preprint / source and reproducibility archive
 
 This repository contains the paper, LaTeX source, and supporting Python scripts for:
 
-> **A Constructive N-Series Acceleration Law for Polygonal Approximation of π**
+> **Certified Constructive N-Series Acceleration for Polygonal Approximation of π**
 
 ## Read the paper
 
 - [Read the paper (PDF)](paper/nseries_pi_acceleration.pdf)
 - [LaTeX source](paper/nseries_pi_acceleration.tex)
-- [Latest release](https://github.com/CWBaker360/N-Series-pi-acceleration/releases/latest)
+- [Historical GitHub releases (may contain older manuscript)](https://github.com/CWBaker360/N-Series-pi-acceleration/releases)
 
 ## Lean 4 formal verification
 
 The mathematical core has a [separate Lean 4/Mathlib companion repository](https://github.com/CWBaker360/nseries-lean-verification). Its pinned A–E10 development reports a successful 28-module build and a 112-declaration axiom audit (standard axioms only; no reported `sorryAx`). A later seven-module constructible-ladder checkpoint and Proposition 4.6 have **separate** local verification evidence and must not be conflated with that earlier audit.
 
-See [verification scope, pinned source, and evidence links](verification/README.md). The original PDF and LaTeX in this repository have **not yet** been replaced by the later corrected manuscript. This main-branch documentation update does not create a GitHub release or modify the existing Zenodo archive.
+See [verification scope, pinned source, and evidence links](verification/README.md). The PDF and TeX in `paper/` are the November 15 manuscript revision, with its publication-provenance clarifications. The [frozen constructible ladder](verification/constructible-ladder-2026-11-15/) and [independently reproduced exact-rational Richardson certificate](verification/certified_richardson_v3_0/) are published separately. No GitHub release or new Zenodo deposit accompanies this main-branch documentation update.
 
 ## Main result
 
@@ -112,9 +112,7 @@ Resumable large-target production script with:
 The paper does not redefine $\pi$. The accelerated sequence has the same
 Archimedean limit and changes only the finite-resolution error structure.
 
-The two-scale operator is a Richardson-type cancellation. The geometric
-contribution is the identification of the chord symmetry that supplies the
-even-power expansion and makes the cancellation exact at the asymptotic level.
+The two-scale operator and polygonal even-power expansion are classical Richardson-type material. The contributions examined in the revised paper include the algebraic branch identification, constructive residual inheritance and target-dependent refinement budget, an exact-rational finite-value certificate, and their carefully delimited Lean formalizations.
 
 ## Research triad
 
@@ -122,7 +120,7 @@ This paper is the third work in a three-paper research sequence:
 
 1. [A Constructible Cubic Error Cascade for Approximate Angle Trisection](https://github.com/CWBaker360/Constructible-Cubic-Trisection/releases/latest)
 2. [A Local Cubic Refinement Law for Proportional-Subtended Angle Division](https://github.com/CWBaker360/proportional-subtended-cubic-refinement/releases/latest)
-3. [A Constructive N-Series Acceleration Law for Polygonal Approximation of π](https://github.com/CWBaker360/N-Series-pi-acceleration/releases/latest)
+3. [Certified Constructive N-Series Acceleration for Polygonal Approximation of π](paper/nseries_pi_acceleration.pdf)
 
 Together, the three papers develop the progression
 
@@ -155,6 +153,9 @@ accelerate polygonal approximations of π.
 │   ├── baker_chord_nseries.py
 │   ├── baker_pi_target.py
 │   └── README.md
+├── verification/
+│   ├── constructible-ladder-2026-11-15/
+│   └── certified_richardson_v3_0/
 └── docs/
     ├── abstract.md
     ├── repository_description.md
