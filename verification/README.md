@@ -27,3 +27,12 @@ This repository's original manuscript files remain unchanged by this documentati
 Changes committed to this repository's `main` branch are **not** a new tagged release and do not modify any previously archived Zenodo release. Do not describe a future manuscript or source revision as an archived DOI artifact until it is deliberately deposited.
 
 For code use the repository's MIT license; for manuscript and research documentation use CC BY 4.0 as specified in the root license notices.
+
+## November 15, 2026 frozen constructive-ladder source
+
+The exact seven-module local checkpoint and its audit evidence are preserved in
+[constructible-ladder-2026-11-15](constructible-ladder-2026-11-15/).
+The checkpoint archive was integrity-checked using its `FREEZE_MANIFEST.txt`;
+source files are retained byte-for-byte. This is a recorded local build and axiom
+audit, not a claim of independent fresh-clone reproduction or complete
+formalization of all manuscript results. No manuscript PDF/TeX was replaced.
