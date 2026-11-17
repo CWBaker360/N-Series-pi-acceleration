@@ -1,0 +1,94 @@
+{
+  "package": "Baker pi_g certified verification package",
+  "version": "3.0",
+  "date": "2026-07-30",
+  "overall_verdict": "PI_G_CERTIFIED_CONSTRUCTION_AND_CONSISTENCY_CHECKS_PASS",
+  "working_precision_decimal_digits": 120,
+  "level_count": 11,
+  "r9_total_certified_abs_error_bound": "3.4062857583141178024467533003750371953541882810522e-81",
+  "r9_certified_absolute_decimal_places": 80,
+  "claim_boundary": "R9 is a rigorous finite-value enclosure. Cross-domain checks are supplementary; H6, E7, and R8 are library-level checks.",
+  "manifest_self_hash_note": "PACKAGE_MANIFEST.json is necessarily excluded from its own file list.",
+  "files": [
+    {
+      "path": "CHANGELOG.md",
+      "size_bytes": 1018,
+      "sha256": "52009cfedfc44767ef670252a289a9386efabbd6d5970fa7c4c8d2e6186f40a5"
+    },
+    {
+      "path": "README.txt",
+      "size_bytes": 5043,
+      "sha256": "a138f031efeab4f719dfedf0aa98dd9424fb6fb8ab962f2c30268c14825870c1"
+    },
+    {
+      "path": "REQUIREMENTS.txt",
+      "size_bytes": 663,
+      "sha256": "d2faf8a643e6bb662a5923de2777d090d7435336638e6be738a1e17d325745e2"
+    },
+    {
+      "path": "build_package_manifest.py",
+      "size_bytes": 2816,
+      "sha256": "91cf052d57bf62678fbab686b3d76b8a07b4f7cdc2b3d93e48e7ffa1ded20be2"
+    },
+    {
+      "path": "build_pi_g_report.py",
+      "size_bytes": 17429,
+      "sha256": "f957ae7449af1e95a9178d7fabba79493040a12d38bf40e4fa099d5fe7268439"
+    },
+    {
+      "path": "certified_richardson.py",
+      "size_bytes": 12696,
+      "sha256": "b16fa82d7b926a31ab19f5526034f91310510345f80b4ef464840df2b6c6ed25"
+    },
+    {
+      "path": "output/pi_g_verification_manifest.json",
+      "size_bytes": 6840,
+      "sha256": "a41feab7769063c9851345ff0cf9ae5ecdfdf125f4ea83c9af42546001051030"
+    },
+    {
+      "path": "output/pi_g_verification_output.txt",
+      "size_bytes": 4048,
+      "sha256": "b8cbf960151ffde380c5e11478e0ab6eb362e0811f291e7b5f25d22a9c471bf6"
+    },
+    {
+      "path": "output/pi_g_verification_results.csv",
+      "size_bytes": 2613,
+      "sha256": "a6c576a2ad885ebda57c675e252beafed7ddb389427a870d167804c39da301be"
+    },
+    {
+      "path": "output/pi_g_verification_summary.txt",
+      "size_bytes": 766,
+      "sha256": "429b3a28162b2799ec176ab06166ffb48f749d3d8078051f01871d951be5e61c"
+    },
+    {
+      "path": "pi_g_construction.py",
+      "size_bytes": 6648,
+      "sha256": "d0ebc5d054cc8f4efe7fe5dd449e7f607af82088cdc96653b6b4393dd9ecfdac"
+    },
+    {
+      "path": "pi_g_verification_report.pdf",
+      "size_bytes": 490892,
+      "sha256": "33caf46dcd4d5573548cad9902ea1a0d9f03d91b8d6b7b24e36600ccda11ffa7"
+    },
+    {
+      "path": "pi_g_verification_report.tex",
+      "size_bytes": 59800,
+      "sha256": "f84568ff1e87695711cfbc64728ccc22ae85bfa0d3d32e556551303a95fae188"
+    },
+    {
+      "path": "requirements.txt",
+      "size_bytes": 14,
+      "sha256": "a699f46ed76bd216f1081b6b2330e4fb45d7c8c5a5354b208694d6590a5a8645"
+    },
+    {
+      "path": "test_certified_richardson.py",
+      "size_bytes": 2045,
+      "sha256": "a399a20749f3c7ad4f33be2a20f93d145707263cc1f7a3933e927d47d9375f66"
+    },
+    {
+      "path": "verify_pi_g_identities.py",
+      "size_bytes": 22864,
+      "sha256": "39ab6eb0899a3aca2657fb1b422314e223641aa2e174f901c06c7e96044c18c8"
+    }
+  ]
+}

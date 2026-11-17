@@ -36,3 +36,16 @@ The checkpoint archive was integrity-checked using its `FREEZE_MANIFEST.txt`;
 source files are retained byte-for-byte. This is a recorded local build and axiom
 audit, not a claim of independent fresh-clone reproduction or complete
 formalization of all manuscript results. No manuscript PDF/TeX was replaced.
+
+## Certified Richardson v3.0 (30 July 2026; independently reproduced November 2026)
+
+The [certification source, original report and verified outputs](certified_richardson_v3_0/)
+provide the R9 exact-rational enclosure for the canonical eleven-input *algebraic*
+scale-3 Richardson tableau. The recorded and independently regenerated 9/9 checks
+and four unit tests pass, with absolute error bound below `1e-80`.
+
+The included `PACKAGE_MANIFEST.json` verifies 15 original files exactly. The
+supplementary uppercase `REQUIREMENTS.txt` was not recovered; `requirements.txt`
+(the actual pinned Python dependency) is present. See `INDEPENDENT_REPRODUCTION.md`.
+This is not an end-to-end Lean proof of Theorem 6.1 or a physical straightedge-
+and-compass error-tolerance certificate. No manuscript files were replaced here.

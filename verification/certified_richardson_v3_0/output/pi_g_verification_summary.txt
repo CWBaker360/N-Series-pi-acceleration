@@ -1,0 +1,14 @@
+Baker pi_g certified construction and verification summary
+==========================================================
+checks_passed: 9/9
+working_precision_decimal_digits: 120
+level_count: 11
+maximum_level: 10
+diagnostic_abs_pi_g_minus_pi: 2.62460469419605053323428123545e-81
+internal_last_diagonal_delta_diagnostic: 1.68888783015368936452420728675e-68
+r9_analytic_tableau_to_pi_bound: 3.40628574228490541814212188769e-81
+r9_production_to_exact_tableau_bound: 1.60292123843046314126834219505e-89
+r9_total_certified_abs_error_bound: 3.40628575831411780244675330038e-81
+r9_certified_absolute_decimal_places: 80
+overall_verdict: PI_G_CERTIFIED_CONSTRUCTION_AND_CONSISTENCY_CHECKS_PASS
+claim_boundary: R9 is rigorous; H6, E7, and R8 are library-level consistency checks.

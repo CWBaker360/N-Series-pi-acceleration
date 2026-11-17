@@ -1,0 +1,1593 @@
+\documentclass[11pt]{article}
+\ifdefined\pdfinfoomitdate\pdfinfoomitdate=1\fi
+\ifdefined\pdftrailerid\pdftrailerid{}\fi
+\ifdefined\pdfsuppressptexinfo\pdfsuppressptexinfo=15\fi
+\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}
+\usepackage{lmodern}
+\usepackage{amsmath,amssymb,amsthm}
+\usepackage{booktabs,longtable,array}
+\usepackage{geometry}
+\usepackage{microtype}
+\usepackage{listings}
+\usepackage{xcolor}
+\usepackage{hyperref}
+\usepackage{fancyhdr}
+\usepackage{enumitem}
+\usepackage{mathtools}
+\usepackage{seqsplit}
+
+\geometry{margin=1in}
+\hypersetup{colorlinks=true,linkcolor=blue!45!black,urlcolor=blue!45!black,citecolor=blue!45!black}
+\setlength{\parindent}{0pt}
+\setlength{\parskip}{0.55em}
+\setlength{\headheight}{14pt}
+\pagestyle{fancy}
+\fancyhf{}
+\lhead{Baker algebraic Archimedean method}
+\rhead{Certified computational appendix}
+\cfoot{\thepage}
+
+\lstdefinestyle{pythonstyle}{
+  language=Python,
+  basicstyle=\ttfamily\scriptsize,
+  keywordstyle=\bfseries,
+  commentstyle=\itshape,
+  stringstyle=\ttfamily,
+  numbers=left,
+  numberstyle=\tiny,
+  numbersep=8pt,
+  breaklines=true,
+  breakatwhitespace=false,
+  showstringspaces=false,
+  columns=fullflexible,
+  keepspaces=true,
+  frame=single,
+  rulecolor=\color{black!25},
+  tabsize=4
+}
+\lstdefinestyle{outputstyle}{
+  basicstyle=\ttfamily\scriptsize,
+  numbers=none,
+  breaklines=true,
+  columns=fullflexible,
+  keepspaces=true,
+  frame=single,
+  rulecolor=\color{black!25}
+}
+
+\newtheorem{theorem}{Theorem}
+\newtheorem{proposition}{Proposition}
+\newtheorem{corollary}{Corollary}
+\newtheorem{remark}{Remark}
+\newcommand{\pig}{\pi_g}
+
+\title{Certified Algebraic Construction and Richardson Enclosure\\for Baker's Geometric Approximation to $\pi$}
+\author{Wayne Baker\\Independent Researcher, Newfoundland and Labrador, Canada}
+\date{July 30, 2026\\Version 3.0}
+
+\begin{document}
+\maketitle
+
+\begin{abstract}
+This report closes the principal rigor gap in the earlier verification package.  The production algorithm begins with the exact hexagon seed $c_0=1/2$, repeatedly selects the small positive root of $4u^3-3u+c=0$, forms the tripled inscribed-polygon values, and applies a full scale-$3$ Richardson/N-Series tableau.  No numerical value of $\pi$ and no trigonometric function is consulted while constructing the approximation.  A separate certification lane uses exact rational arithmetic to propagate cubic-root intervals through every level and through the complete tableau.  The resulting numerical enclosure is combined with an analytic sine-series remainder bound based only on the classical rational inequality $\pi<22/7$.  For the canonical 11-input run at 120-decimal working precision, the finite production value is proved to satisfy
+\[
+ |\pig-\pi| < \texttt{3.406285758314118e-81},
+\]
+which certifies at least 80 decimal places of absolute accuracy.  Eight additional cross-domain checks all pass; they are retained as reproducibility and consistency evidence, while the new R9 enclosure carries the rigorous finite-value certification.
+\end{abstract}
+
+\tableofcontents
+\newpage
+
+\section{Claim boundary and status}
+
+Version 3.0 makes two distinct claims.
+
+\begin{enumerate}[label=\arabic*.]
+\item The exact algebraic chord recursion generates the classical tripled inscribed-polygon sequence.  Consequently its infinite polygonal limit is the classical constant $\pi$.
+\item The finite value emitted by the supplied production script is enclosed a priori by an exact rational interval calculation plus an analytic Taylor-remainder estimate.  The canonical run satisfies the explicit bound displayed in the abstract.
+\end{enumerate}
+
+The last Richardson-diagonal difference remains printed as a convergence diagnostic, but it is no longer used as an error bound.  Checks H6, E7, and R8 call library special functions and are not claimed to be algorithmically independent of the library's implementation of $\pi$.  The other cross-domain tests likewise supplement, rather than replace, the R9 certificate.
+
+\section{Oracle-free algebraic construction}
+
+\subsection{Unique small positive cubic branch}
+
+For $0<c\le1/2$, define
+\[
+ f_c(u)=4u^3-3u+c.
+\]
+
+\begin{proposition}[Certified branch]
+The interval $(0,c/2)$ contains exactly one zero of $f_c$.
+\end{proposition}
+
+\begin{proof}
+At the endpoints,
+\[
+ f_c(0)=c>0,
+ \qquad
+ f_c\!\left(\frac c2\right)=\frac{c(c^2-1)}2<0.
+\]
+Moreover,
+\[
+ f_c'(u)=12u^2-3<0
+\]
+throughout $0\le u\le c/2\le1/4$.  Hence $f_c$ is strictly decreasing on the sign-changing bracket and has exactly one root there.
+\end{proof}
+
+\subsection{Identification with the exact polygon sequence}
+
+\begin{theorem}[Triple-angle identification]
+Let $c_0=1/2$, and let $c_{L+1}$ be the unique zero of
+\[
+ 4u^3-3u+c_L=0
+\]
+in $(0,c_L/2)$.  Then, for every $L\ge0$,
+\[
+ c_L=\sin\!\left(\frac{\pi}{6\cdot3^L}\right).
+\]
+Consequently,
+\[
+ P_L=6\cdot3^L c_L
+     =N_L\sin\!\left(\frac{\pi}{N_L}\right),
+ \qquad N_L=6\cdot3^L,
+\]
+is exactly the classical inscribed regular-$N_L$-gon semiperimeter sequence.
+\end{theorem}
+
+\begin{proof}
+The base case is $c_0=1/2=\sin(\pi/6)$.  Suppose $c_L=\sin x$ with $x=\pi/(6\cdot3^L)$ and set $u=\sin(x/3)$.  The triple-angle identity gives
+\[
+ 4u^3-3u+c_L=0.
+\]
+Since $0<u<1/2$,
+\[
+ c_L-2u=(3u-4u^3)-2u=u(1-4u^2)>0,
+\]
+so $u\in(0,c_L/2)$.  The preceding proposition makes it the unique selected root.  Induction completes the proof.
+\end{proof}
+
+\begin{corollary}
+The limiting geometric value is not a distinct constant:
+\[
+ \lim_{L\to\infty}P_L=\pi.
+\]
+The notation $\pig$ may be retained for the finite algebraic/N-Series approximation or for its geometric presentation, but its exact limit equals $\pi$.
+\end{corollary}
+
+\section{Scale-3 Richardson cancellation}
+
+Given $M=11$ polygon inputs, put $s=M-1=10$ and define
+\[
+ R_0(N)=P_N,
+ \qquad
+ R_r(N)=\frac{9^rR_{r-1}(3N)-R_{r-1}(N)}{9^r-1}
+ \quad (1\le r\le s).
+\]
+Equivalently, the final value is a rational linear combination
+\[
+ T_s=\sum_{j=0}^s w_jP_{6\cdot3^j},
+\]
+where the exact weights satisfy
+\[
+ \sum_{j=0}^s w_j=1,
+ \qquad
+ \sum_{j=0}^s \frac{w_j}{(6\cdot3^j)^{2m}}=0
+ \quad (1\le m\le s).
+\]
+The certification code verifies all these moment identities using exact fractions.
+
+\section{Analytic a priori remainder}
+
+\begin{theorem}[Certified tableau remainder]
+Let $U=22/7$.  For the exact polygon inputs and the exact Richardson weights above,
+\[
+ |T_s-\pi|\le B_{\rm an},
+\]
+where
+\[
+ B_{\rm an}
+ =\frac{U^{2s+3}}{(2s+3)!}
+  \sum_{j=0}^s
+  \frac{|w_j|}{(6\cdot3^j)^{2s+2}}.
+\]
+For the canonical run,
+\[
+ B_{\rm an}=\texttt{3.40628574228490542e-81}.
+\]
+\end{theorem}
+
+\begin{proof}
+For $N\ge6$, the sine expansion gives
+\[
+ N\sin\!\left(\frac\pi N\right)
+ =\pi+\sum_{m=1}^s
+ \frac{(-1)^m\pi^{2m+1}}{(2m+1)!N^{2m}}+r_s(N).
+\]
+Because $0<\pi/N\le\pi/6<1$, the alternating terms decrease in magnitude, and
+\[
+ |r_s(N)|\le
+ \frac{\pi^{2s+3}}{(2s+3)!N^{2s+2}}
+ <\frac{U^{2s+3}}{(2s+3)!N^{2s+2}}.
+\]
+The Richardson moment identities preserve the constant term and cancel all displayed modes $N^{-2},\ldots,N^{-2s}$.  Therefore
+\[
+ T_s-\pi=\sum_{j=0}^s w_jr_s(6\cdot3^j),
+\]
+and the triangle inequality yields the stated rational bound.
+\end{proof}
+
+\section{Exact interval propagation through the computation}
+
+The certification lane stores every endpoint as a \texttt{fractions.Fraction}.  For an interval coefficient $c\in[c_-,c_+]$, the selected root is increasing in $c$, since implicit differentiation gives
+\[
+ \frac{du}{dc}=-\frac1{12u^2-3}>0
+\]
+on the selected branch.  The next chord interval is therefore obtained from a lower bracket for the root at $c_-$ and an upper bracket for the root at $c_+$.  The canonical run uses 300 exact bisection steps at each endpoint.
+
+The polygon intervals are then propagated through the affine Richardson recurrences with exact rational coefficients and correct sign-aware interval arithmetic.  If $[A,B]$ is the resulting exact-tableau enclosure and $y$ is the exact binary rational represented by the production \texttt{mpmath} value, then
+\[
+ |y-T_s|\le B_{\rm num}
+ :=\max\{|y-A|,|y-B|\}.
+\]
+For this run,
+\[
+ B_{\rm num}=\texttt{1.60292123843046314e-89}.
+\]
+No heuristic floating-point round-off term is needed in this certificate.
+
+Combining the two independent components gives
+\[
+ |y-\pi|\le B_{\rm num}+B_{\rm an}
+ =\texttt{3.4062857583141178e-81}<10^{-80}.
+\]
+This is the R9 acceptance bound.
+
+\section{Canonical numerical run}
+
+The production lane used 120 decimal digits and levels $L=0,\ldots,10$.
+
+\textbf{Production value $\pig$:}
+
+{\small\ttfamily\seqsplit{3.141592653589793238462643383279502884197169399375105820974944592307816406286208996003430131146066535}}
+
+\textbf{Reference value used only after construction:}
+
+{\small\ttfamily\seqsplit{3.141592653589793238462643383279502884197169399375105820974944592307816406286208998628034825342117068}}
+
+\[
+|\pig-\pi_{\rm reference}|=\texttt{2.62460469419605053e-81}.
+\]
+
+The reference comparison is performed only after the construction and certificate have been fixed.  It is a diagnostic consistency check, not an input to R9.
+
+\begin{table}[ht]
+\centering
+\small
+\caption{Polygon inputs and Richardson diagonal}
+\begin{tabular}{r r l l}
+\toprule
+$L$ & $N_L$ & $P_L$ & diagonal entry \\
+\midrule
+0 & 6 & \texttt{3.0} & \texttt{3.0} \\
+1 & 18 & \texttt{3.125667198004746279331} & \texttt{3.141375597755339564247} \\
+2 & 54 & \texttt{3.139820761165694741092} & \texttt{3.141592636045881720495} \\
+3 & 162 & \texttt{3.141395747035548337671} & \texttt{3.141592653589701467835} \\
+4 & 486 & \texttt{3.141570774718079713566} & \texttt{3.141592653589793238428} \\
+5 & 1458 & \texttt{3.141590222599532605478} & \texttt{3.141592653589793238463} \\
+6 & 4374 & \texttt{3.141592383479708542326} & \texttt{3.141592653589793238463} \\
+7 & 13122 & \texttt{3.141592623577560917448} & \texttt{3.141592653589793238463} \\
+8 & 39366 & \texttt{3.141592650255100749855} & \texttt{3.141592653589793238463} \\
+9 & 118098 & \texttt{3.141592653219271850735} & \texttt{3.141592653589793238463} \\
+10 & 354294 & \texttt{3.14159265354862419538} & \texttt{3.141592653589793238463} \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+The old last-diagonal diagnostic is
+\[
+ \texttt{1.68888783015368936e-68},
+\]
+while the production root solver reports a maximum bracket width of
+\[
+ \texttt{9.96319669471211514e-101}
+\]
+and a maximum midpoint cubic residual of
+\[
+ \texttt{1.40735005136297494e-100}.
+\]
+These diagnostics are not used in the R9 proof.
+
+\section{Nine verification checks}
+
+\begin{longtable}{p{0.06\linewidth}p{0.29\linewidth}p{0.20\linewidth}p{0.20\linewidth}p{0.08\linewidth}}
+\toprule
+ID & Check & Observed metric & Acceptance bound & Status \\
+\midrule
+\endhead
+R9 & Certified Richardson enclosure & \texttt{3.406285758e-81} & \texttt{1.0e-80} & PASS \\
+G1 & Gaussian integral & \texttt{3.083284322e-75} & \texttt{3.092354012e-75} & PASS \\
+B2 & Basel identity & \texttt{7.514080526e-76} & \texttt{7.544779843e-76} & PASS \\
+L3 & Gregory-Leibniz identity & \texttt{3.373975626e-71} & \texttt{3.381231885e-71} & PASS \\
+W4 & Wallis product & \texttt{0} & \texttt{1.0e-105} & PASS \\
+S5 & Robbins-Stirling bounds & \texttt{0} & \texttt{1.0e-105} & PASS \\
+H6 & Gamma at one half & \texttt{2.624604694e-81} & \texttt{1.0e-65} & PASS \\
+E7 & Euler identity & \texttt{2.624604694e-81} & \texttt{1.0e-65} & PASS \\
+R8 & Euler reflection formula & \texttt{4.943233175e-82} & \texttt{1.0e-65} & PASS \\
+\bottomrule
+\end{longtable}
+
+All nine checks pass.  R9 is the rigorous certificate for the finite constructed value.  G1--S5 use explicit analytic tails or two-sided inequalities together with high-precision numerical evaluation.  H6, E7, and R8 are deliberately labelled library-level cross-checks.
+
+\section{Reproducibility procedure}
+
+From the extracted package directory, run
+\begin{verbatim}
+python verify_pi_g_identities.py --output-dir output
+python -m unittest -v test_certified_richardson.py
+python build_pi_g_report.py --compile
+python build_package_manifest.py
+\end{verbatim}
+
+The verification driver regenerates the CSV, JSON, summary, and full output log.  The unit tests independently verify the exact cubic brackets, Richardson moment cancellations, and the canonical R9 threshold.  The package manifest records SHA-256 hashes for shipped-file integrity.  A rebuilt PDF can have different binary metadata across TeX environments even when its rendered mathematical content is unchanged.
+
+\section{Conclusion}
+
+The gap in Version 2.1 was real but limited: the last Richardson-diagonal change was an empirical stabilization diagnostic rather than a certified remainder.  Version 3.0 replaces that diagnostic as the proof mechanism.  Exact rational root intervals control the algebraic construction, exact rational affine propagation controls the complete tableau, and a closed analytic sine remainder controls the distance from the exact tableau to $\pi$.  The canonical production value is therefore enclosed without consulting a numerical $\pi$ oracle and is proved to have at least 80 decimal places of absolute accuracy.
+
+\appendix
+\section{Embedded source and canonical output}
+\begin{lstlisting}[style=pythonstyle,caption={Production lane: \texttt{pi\_g\_construction.py}}]
+#!/usr/bin/env python3
+"""Oracle-free construction kernel for Baker's geometric constant pi_g.
+
+This module deliberately does not import or reference the classical constant pi.
+It starts from the algebraic hexagon seed c_0 = 1/2, repeatedly selects the
+unique small positive root of
+
+    4 u^3 - 3 u + c = 0,
+
+and applies the N-series Richardson table with scale factor 3.
+"""
+
+from __future__ import annotations
+
+from dataclasses import dataclass
+from typing import Sequence
+
+from mpmath import mp
+
+
+@dataclass(frozen=True)
+class RootCertificate:
+    """Numerical record for one deterministically bracketed cubic root."""
+
+    value: mp.mpf
+    lower: mp.mpf
+    upper: mp.mpf
+    width: mp.mpf
+    iterations: int
+    polynomial_residual: mp.mpf
+
+
+@dataclass(frozen=True)
+class PiGConstructionResult:
+    """Complete output of the algebraic polygon/extrapolation pipeline."""
+
+    value: mp.mpf
+    level_count: int
+    maximum_level: int
+    work_dps: int
+    polygon_values: tuple[mp.mpf, ...]
+    extrapolated_diagonal: tuple[mp.mpf, ...]
+    internal_last_diagonal_delta: mp.mpf
+    maximum_root_bracket_width: mp.mpf
+    maximum_root_polynomial_residual: mp.mpf
+    root_iterations: tuple[int, ...]
+
+
+def _cubic(u: mp.mpf, c: mp.mpf) -> mp.mpf:
+    return 4 * u**3 - 3 * u + c
+
+
+def small_positive_trisection_root(c: mp.mpf) -> RootCertificate:
+    """Return the unique root in (0, c/2) by deterministic bisection.
+
+    For 0 < c <= 1/2,
+
+        f_c(0) = c > 0,
+        f_c(c/2) = c(c^2 - 1)/2 < 0,
+
+    and f'_c(u) = 12u^2 - 3 < 0 on [0, c/2].  Hence this interval
+    contains exactly one root, which is the required small positive branch.
+
+    The mathematical branch selection is exact.  The returned decimal value
+    is a high-precision midpoint of the final sign-changing bracket.
+    """
+
+    c = mp.mpf(c)
+    if not (mp.mpf("0") < c <= mp.mpf("0.5")):
+        raise ValueError(f"Expected 0 < c <= 1/2, received {c!r}")
+
+    lower = mp.mpf("0")
+    upper = c / 2
+    f_lower = _cubic(lower, c)
+    f_upper = _cubic(upper, c)
+
+    if not (f_lower > 0 and f_upper < 0):
+        raise ArithmeticError("Initial cubic bracket does not change sign")
+
+    # Preserve roughly 20 decimal guard digits inside the active mp context.
+    target_width = mp.power(10, -(mp.dps - 20))
+    maximum_iterations = max(256, 8 * mp.dps)
+
+    iterations = 0
+    for iterations in range(1, maximum_iterations + 1):
+        midpoint = (lower + upper) / 2
+        if midpoint == lower or midpoint == upper:
+            break
+
+        f_midpoint = _cubic(midpoint, c)
+        if f_midpoint > 0:
+            lower = midpoint
+        elif f_midpoint < 0:
+            upper = midpoint
+        else:
+            lower = upper = midpoint
+            break
+
+        if upper - lower <= target_width:
+            break
+    else:
+        raise ArithmeticError("Bisection did not reach the requested bracket width")
+
+    value = (lower + upper) / 2
+    width = upper - lower
+    residual = abs(_cubic(value, c))
+
+    if width > target_width * 2:
+        raise ArithmeticError(
+            f"Final root bracket is wider than expected: {mp.nstr(width, 12)}"
+        )
+
+    return RootCertificate(
+        value=value,
+        lower=lower,
+        upper=upper,
+        width=width,
+        iterations=iterations,
+        polynomial_residual=residual,
+    )
+
+
+def richardson_n_series(values: Sequence[mp.mpf]) -> tuple[mp.mpf, tuple[mp.mpf, ...]]:
+    """Apply the scale-3 even-power Richardson/N-series table.
+
+    If the polygon error has an expansion in N^{-2}, N^{-4}, ..., replacing
+    N by 3N multiplies the leading term at stage s by 9^{-s}.  Therefore the
+    stage-s denominator is 9^s - 1.
+    """
+
+    if not values:
+        raise ValueError("At least one polygon value is required")
+
+    n = len(values)
+    table: list[list[mp.mpf | None]] = [[mp.mpf(v) for v in values]]
+
+    for stage in range(1, n):
+        previous = table[-1]
+        current: list[mp.mpf | None] = [None] * n
+        denominator = mp.power(9, stage) - 1
+        for column in range(stage, n):
+            right = previous[column]
+            left = previous[column - 1]
+            if right is None or left is None:
+                raise ArithmeticError("Malformed Richardson table")
+            current[column] = right + (right - left) / denominator
+        table.append(current)
+
+    diagonal: list[mp.mpf] = []
+    for stage in range(n):
+        value = table[stage][stage]
+        if value is None:
+            raise ArithmeticError("Missing Richardson diagonal entry")
+        diagonal.append(value)
+
+    final = table[-1][-1]
+    if final is None:
+        raise ArithmeticError("Missing final Richardson value")
+
+    return final, tuple(diagonal)
+
+
+def compute_pi_g(*, level_count: int = 11, work_dps: int = 120) -> PiGConstructionResult:
+    """Compute pi_g without consulting the classical constant pi.
+
+    ``level_count=11`` means the polygon inputs L=0,...,10 are used.  The
+    construction result is selected deterministically as the final entry of
+    the corresponding Richardson table; no reference constant is consulted.
+    """
+
+    if level_count < 2:
+        raise ValueError("level_count must be at least 2")
+    if work_dps < 50:
+        raise ValueError("work_dps must be at least 50")
+
+    with mp.workdps(work_dps):
+        c = mp.mpf(1) / 2
+        polygon_values: list[mp.mpf] = []
+        root_certificates: list[RootCertificate] = []
+
+        for level in range(level_count):
+            n_sides = mp.mpf(6) * mp.power(3, level)
+            polygon_values.append(n_sides * c)
+
+            if level + 1 < level_count:
+                certificate = small_positive_trisection_root(c)
+                root_certificates.append(certificate)
+                c = certificate.value
+
+        final, diagonal = richardson_n_series(polygon_values)
+        internal_delta = abs(diagonal[-1] - diagonal[-2])
+
+        maximum_width = max(cert.width for cert in root_certificates)
+        maximum_residual = max(cert.polynomial_residual for cert in root_certificates)
+        iterations = tuple(cert.iterations for cert in root_certificates)
+
+        return PiGConstructionResult(
+            value=+final,
+            level_count=level_count,
+            maximum_level=level_count - 1,
+            work_dps=work_dps,
+            polygon_values=tuple(+v for v in polygon_values),
+            extrapolated_diagonal=tuple(+v for v in diagonal),
+            internal_last_diagonal_delta=+internal_delta,
+            maximum_root_bracket_width=+maximum_width,
+            maximum_root_polynomial_residual=+maximum_residual,
+            root_iterations=iterations,
+        )
+\end{lstlisting}
+
+\begin{lstlisting}[style=pythonstyle,caption={Exact certification lane: \texttt{certified\_richardson.py}}]
+#!/usr/bin/env python3
+"""Exact rational enclosure for the Baker scale-3 polygon/Richardson pipeline.
+
+This module is the rigorous certification lane.  It uses only Python integers
+and ``fractions.Fraction`` for all branch brackets, interval propagation,
+Richardson weights, and error bounds.  No floating-point arithmetic and no
+numerical value of pi are used in the certificate itself.
+
+The only analytic constant entering the remainder estimate is the classical
+rational upper bound pi < 22/7.
+"""
+
+from __future__ import annotations
+
+from dataclasses import dataclass
+from fractions import Fraction
+from math import factorial
+from typing import Sequence
+
+
+@dataclass(frozen=True)
+class RationalInterval:
+    """Closed interval with exact rational endpoints."""
+
+    lower: Fraction
+    upper: Fraction
+
+    def __post_init__(self) -> None:
+        if self.lower > self.upper:
+            raise ValueError("interval lower endpoint exceeds upper endpoint")
+
+    @property
+    def width(self) -> Fraction:
+        return self.upper - self.lower
+
+    @property
+    def midpoint(self) -> Fraction:
+        return (self.lower + self.upper) / 2
+
+
+@dataclass(frozen=True)
+class ExactRootStep:
+    """Exact propagated enclosure for one cubic trisection step."""
+
+    input_interval: RationalInterval
+    output_interval: RationalInterval
+    endpoint_bisection_steps: int
+
+
+@dataclass(frozen=True)
+class RichardsonCertificate:
+    """Complete a priori enclosure for the finite Richardson output."""
+
+    level_count: int
+    maximum_level: int
+    base_sides: int
+    bisection_bits: int
+    chord_intervals: tuple[RationalInterval, ...]
+    polygon_intervals: tuple[RationalInterval, ...]
+    root_steps: tuple[ExactRootStep, ...]
+    final_weights: tuple[Fraction, ...]
+    tableau_interval: RationalInterval
+    production_value: Fraction
+    production_to_exact_tableau_bound: Fraction
+    analytic_tableau_to_pi_bound: Fraction
+    total_pi_error_bound: Fraction
+    certified_decimal_places: int
+    production_value_inside_tableau_interval: bool
+
+
+def cubic_fraction(u: Fraction, c: Fraction) -> Fraction:
+    """Evaluate 4*u^3 - 3*u + c exactly."""
+
+    return 4 * u**3 - 3 * u + c
+
+
+def mpf_to_fraction(value: object) -> Fraction:
+    """Convert an mpmath mpf to its exact binary rational value.
+
+    mpmath stores a finite mpf as ``(sign, mantissa, exponent, bitcount)`` and
+    represents exactly ``(-1)^sign * mantissa * 2^exponent``.
+    """
+
+    try:
+        sign, mantissa, exponent, _bitcount = value._mpf_  # type: ignore[attr-defined]
+    except AttributeError as exc:  # pragma: no cover - defensive API guard
+        raise TypeError("value is not an mpmath mpf") from exc
+
+    numerator = -int(mantissa) if sign else int(mantissa)
+    if exponent >= 0:
+        return Fraction(numerator << exponent, 1)
+    return Fraction(numerator, 1 << (-exponent))
+
+
+def _bisect_fixed_c_root(c: Fraction, bits: int) -> RationalInterval:
+    """Enclose the unique small positive root for an exact rational c.
+
+    For 0 < c <= 1/2, the root lies uniquely in (0,c/2).  Exactly ``bits``
+    sign-preserving bisection steps are performed using rational arithmetic.
+    """
+
+    if not (Fraction(0) < c <= Fraction(1, 2)):
+        raise ValueError("expected 0 < c <= 1/2")
+    if bits < 8:
+        raise ValueError("bits must be at least 8")
+
+    lower = Fraction(0)
+    upper = c / 2
+    if cubic_fraction(lower, c) <= 0 or cubic_fraction(upper, c) >= 0:
+        raise ArithmeticError("initial exact cubic bracket is invalid")
+
+    for _ in range(bits):
+        midpoint = (lower + upper) / 2
+        sign = cubic_fraction(midpoint, c)
+        if sign > 0:
+            lower = midpoint
+        elif sign < 0:
+            upper = midpoint
+        else:
+            return RationalInterval(midpoint, midpoint)
+
+    if cubic_fraction(lower, c) < 0 or cubic_fraction(upper, c) > 0:
+        raise ArithmeticError("exact bisection lost the sign-changing bracket")
+    return RationalInterval(lower, upper)
+
+
+def propagate_cubic_root_interval(
+    c_interval: RationalInterval, bits: int
+) -> ExactRootStep:
+    """Propagate an interval-valued cubic coefficient through the root map.
+
+    On the selected branch, the root r(c) is increasing in c because
+    r'(c) = -1/(12*r(c)^2-3) > 0.  Therefore a rigorous enclosure is obtained
+    from the lower bracket for r(c_lower) and the upper bracket for r(c_upper).
+    """
+
+    lower_root = _bisect_fixed_c_root(c_interval.lower, bits)
+    upper_root = _bisect_fixed_c_root(c_interval.upper, bits)
+    output = RationalInterval(lower_root.lower, upper_root.upper)
+    return ExactRootStep(
+        input_interval=c_interval,
+        output_interval=output,
+        endpoint_bisection_steps=bits,
+    )
+
+
+def build_chord_intervals(
+    *, level_count: int, bisection_bits: int
+) -> tuple[tuple[RationalInterval, ...], tuple[ExactRootStep, ...]]:
+    """Build exact enclosures for c_L, beginning with c_0=1/2."""
+
+    if level_count < 2:
+        raise ValueError("level_count must be at least 2")
+
+    chords: list[RationalInterval] = [RationalInterval(Fraction(1, 2), Fraction(1, 2))]
+    steps: list[ExactRootStep] = []
+    for _level in range(1, level_count):
+        step = propagate_cubic_root_interval(chords[-1], bisection_bits)
+        steps.append(step)
+        chords.append(step.output_interval)
+    return tuple(chords), tuple(steps)
+
+
+def scale_interval(interval: RationalInterval, scalar: Fraction) -> RationalInterval:
+    if scalar >= 0:
+        return RationalInterval(scalar * interval.lower, scalar * interval.upper)
+    return RationalInterval(scalar * interval.upper, scalar * interval.lower)
+
+
+def affine_interval(
+    first: RationalInterval,
+    first_coefficient: Fraction,
+    second: RationalInterval,
+    second_coefficient: Fraction,
+) -> RationalInterval:
+    """Exact interval enclosure of a*A + b*B with independent intervals."""
+
+    first_scaled = scale_interval(first, first_coefficient)
+    second_scaled = scale_interval(second, second_coefficient)
+    return RationalInterval(
+        first_scaled.lower + second_scaled.lower,
+        first_scaled.upper + second_scaled.upper,
+    )
+
+
+def richardson_weights(level_count: int) -> tuple[Fraction, ...]:
+    """Return exact final scale-3 Richardson weights on all polygon inputs."""
+
+    if level_count < 1:
+        raise ValueError("level_count must be positive")
+
+    previous: list[list[Fraction] | None] = []
+    for column in range(level_count):
+        previous.append(
+            [Fraction(1 if index == column else 0) for index in range(level_count)]
+        )
+
+    for stage in range(1, level_count):
+        current: list[list[Fraction] | None] = [None] * level_count
+        denominator = 9**stage - 1
+        right_factor = Fraction(9**stage, denominator)
+        left_factor = Fraction(-1, denominator)
+        for column in range(stage, level_count):
+            right = previous[column]
+            left = previous[column - 1]
+            if right is None or left is None:
+                raise ArithmeticError("malformed exact Richardson weight table")
+            current[column] = [
+                right_factor * right[index] + left_factor * left[index]
+                for index in range(level_count)
+            ]
+        previous = current
+
+    final = previous[-1]
+    if final is None:
+        raise ArithmeticError("missing final exact Richardson weights")
+    weights = tuple(final)
+    if sum(weights, Fraction(0)) != 1:
+        raise ArithmeticError("Richardson weights do not preserve constants")
+    return weights
+
+
+def apply_richardson_intervals(
+    polygon_intervals: Sequence[RationalInterval],
+) -> RationalInterval:
+    """Propagate exact polygon intervals through the full Richardson table."""
+
+    if not polygon_intervals:
+        raise ValueError("at least one polygon interval is required")
+
+    previous: list[RationalInterval | None] = list(polygon_intervals)
+    level_count = len(polygon_intervals)
+    for stage in range(1, level_count):
+        current: list[RationalInterval | None] = [None] * level_count
+        denominator = 9**stage - 1
+        right_factor = Fraction(9**stage, denominator)
+        left_factor = Fraction(-1, denominator)
+        for column in range(stage, level_count):
+            right = previous[column]
+            left = previous[column - 1]
+            if right is None or left is None:
+                raise ArithmeticError("malformed exact Richardson interval table")
+            current[column] = affine_interval(
+                right,
+                right_factor,
+                left,
+                left_factor,
+            )
+        previous = current
+
+    final = previous[-1]
+    if final is None:
+        raise ArithmeticError("missing final exact Richardson interval")
+    return final
+
+
+def analytic_richardson_remainder_bound(
+    *, level_count: int, base_sides: int = 6
+) -> Fraction:
+    r"""Bound the exact tableau's distance from pi using pi < 22/7.
+
+    Put s=level_count-1.  For N_j=base_sides*3^j,
+
+        P_{N_j}=N_j sin(pi/N_j)
+
+    is expanded through the N_j^{-2s} term.  The scale-3 Richardson weights
+    preserve the constant term and cancel every mode N^{-2m}, 1<=m<=s.
+    The alternating sine remainder for each input obeys
+
+        |rem_j| <= U^(2s+3) / ((2s+3)! N_j^(2s+2)),  U=22/7.
+
+    Applying the triangle inequality with the exact final weights yields a
+    fully explicit rational bound.  This bound is intentionally conservative;
+    it requires no empirical last-diagonal assumption.
+    """
+
+    if base_sides < 3:
+        raise ValueError("base_sides must be at least 3")
+    s = level_count - 1
+    weights = richardson_weights(level_count)
+    # Verify the moment conditions used in the proof, exactly rather than
+    # assuming that the recursive table was implemented correctly.
+    if sum(weights, Fraction(0)) != 1:
+        raise ArithmeticError("Richardson weights fail constant preservation")
+    for mode in range(1, s + 1):
+        moment = sum(
+            weight / (base_sides * 3**level) ** (2 * mode)
+            for level, weight in enumerate(weights)
+        )
+        if moment != 0:
+            raise ArithmeticError(
+                f"Richardson weights fail exact cancellation at mode {mode}"
+            )
+
+    upper_pi = Fraction(22, 7)
+    common = upper_pi ** (2 * s + 3) / factorial(2 * s + 3)
+
+    weighted_scale_sum = Fraction(0)
+    for level, weight in enumerate(weights):
+        sides = base_sides * 3**level
+        weighted_scale_sum += abs(weight) / sides ** (2 * s + 2)
+    return common * weighted_scale_sum
+
+
+def certified_decimal_places(bound: Fraction) -> int:
+    """Largest D such that bound < 10^{-D}."""
+
+    if bound <= 0:
+        raise ValueError("bound must be positive")
+    digits = 0
+    while bound < Fraction(1, 10 ** (digits + 1)):
+        digits += 1
+    return digits
+
+
+def build_richardson_certificate(
+    *,
+    production_value: object,
+    level_count: int = 11,
+    bisection_bits: int = 300,
+    base_sides: int = 6,
+) -> RichardsonCertificate:
+    """Construct the complete exact rational R9 error certificate."""
+
+    chords, root_steps = build_chord_intervals(
+        level_count=level_count,
+        bisection_bits=bisection_bits,
+    )
+    polygons = tuple(
+        scale_interval(chord, Fraction(base_sides * 3**level))
+        for level, chord in enumerate(chords)
+    )
+    tableau_interval = apply_richardson_intervals(polygons)
+    weights = richardson_weights(level_count)
+    production_fraction = mpf_to_fraction(production_value)
+
+    production_inside = (
+        tableau_interval.lower <= production_fraction <= tableau_interval.upper
+    )
+    production_bound = max(
+        abs(production_fraction - tableau_interval.lower),
+        abs(production_fraction - tableau_interval.upper),
+    )
+    analytic_bound = analytic_richardson_remainder_bound(
+        level_count=level_count,
+        base_sides=base_sides,
+    )
+    total_bound = production_bound + analytic_bound
+
+    return RichardsonCertificate(
+        level_count=level_count,
+        maximum_level=level_count - 1,
+        base_sides=base_sides,
+        bisection_bits=bisection_bits,
+        chord_intervals=chords,
+        polygon_intervals=polygons,
+        root_steps=root_steps,
+        final_weights=weights,
+        tableau_interval=tableau_interval,
+        production_value=production_fraction,
+        production_to_exact_tableau_bound=production_bound,
+        analytic_tableau_to_pi_bound=analytic_bound,
+        total_pi_error_bound=total_bound,
+        certified_decimal_places=certified_decimal_places(total_bound),
+        production_value_inside_tableau_interval=production_inside,
+    )
+\end{lstlisting}
+
+\begin{lstlisting}[style=pythonstyle,caption={Verification driver: \texttt{verify\_pi\_g\_identities.py}}]
+#!/usr/bin/env python3
+"""Referee-safe cross-domain numerical consistency checks for Baker's pi_g.
+
+The algebraic construction is imported from ``pi_g_construction.py``.  The
+classical constant pi is used only after construction, for a separately
+labelled reference comparison.  It is never used to choose or alter pi_g.
+
+The first eight checks are cross-domain residuals or finite enclosures.  The
+ninth check is a rigorous a priori certificate for the constructed Richardson
+value itself: exact rational cubic brackets are propagated through the complete
+tableau and combined with an analytic sine-series remainder bound.
+"""
+
+from __future__ import annotations
+
+import argparse
+import csv
+import hashlib
+import json
+import math
+import sys
+from dataclasses import asdict, dataclass
+from pathlib import Path
+from typing import Callable, Iterable
+
+import mpmath
+from mpmath import mp
+
+from pi_g_construction import PiGConstructionResult, compute_pi_g
+from certified_richardson import (
+    RichardsonCertificate,
+    build_richardson_certificate,
+)
+
+
+DEFAULT_WORK_DPS = 120
+DEFAULT_LEVEL_COUNT = 11
+DIRECT_RESIDUAL_TOLERANCE_TEXT = "1e-65"
+CERTIFIED_ABSOLUTE_ERROR_TARGET_TEXT = "1e-80"
+DEFAULT_CERTIFICATE_BITS = 300
+
+
+@dataclass(frozen=True)
+class CheckResult:
+    identifier: str
+    name: str
+    domain: str
+    method: str
+    observed_metric_name: str
+    observed_metric: mp.mpf
+    acceptance_bound: mp.mpf
+    passed: bool
+    details: str
+
+
+def sha256_file(path: Path) -> str:
+    digest = hashlib.sha256()
+    with path.open("rb") as handle:
+        for block in iter(lambda: handle.read(1024 * 1024), b""):
+            digest.update(block)
+    return digest.hexdigest()
+
+
+def sci(value: mp.mpf, digits: int = 18) -> str:
+    value = mp.mpf(value)
+    if value == 0:
+        return "0"
+    return mp.nstr(value, digits, min_fixed=0, max_fixed=0)
+
+
+def dec(value: mp.mpf, digits: int = 80) -> str:
+    return mp.nstr(mp.mpf(value), digits)
+
+
+def fraction_to_mpf(value: object) -> mp.mpf:
+    """Convert a fractions.Fraction to mp.mpf in the active precision."""
+
+    return mp.mpf(value.numerator) / mp.mpf(value.denominator)
+
+
+def check_gaussian_integral(pi_g: mp.mpf, work_dps: int) -> CheckResult:
+    """Check 2*integral_0^A exp(-x^2) dx against sqrt(pi_g).
+
+    The omitted two-sided tail obeys
+
+        2*integral_A^infinity exp(-x^2) dx <= exp(-A^2)/A.
+
+    A repeat-precision difference is added as a conservative numerical
+    stability allowance for the finite quadrature.
+    """
+
+    cutoff = mp.mpf(13)
+
+    with mp.workdps(work_dps):
+        integral_low = 2 * mp.quad(lambda x: mp.exp(-(x * x)), [0, cutoff])
+    with mp.workdps(work_dps + 30):
+        integral_high = 2 * mp.quad(lambda x: mp.exp(-(x * x)), [0, cutoff])
+
+    integral_high = +integral_high
+    stability = abs(integral_high - integral_low)
+    tail_bound = mp.exp(-(cutoff * cutoff)) / cutoff
+    roundoff = mp.power(10, -(work_dps - 15))
+    allowance = tail_bound + 10 * stability + roundoff
+    residual = abs(mp.sqrt(pi_g) - integral_high)
+
+    return CheckResult(
+        identifier="G1",
+        name="Gaussian integral",
+        domain="Analysis / probability",
+        method="finite quadrature, analytic two-sided tail bound, repeat-precision stability check",
+        observed_metric_name="abs(sqrt(pi_g) - finite integral)",
+        observed_metric=residual,
+        acceptance_bound=allowance,
+        passed=residual <= allowance,
+        details=(
+            f"cutoff A=13; analytic tail<={sci(tail_bound)}; "
+            f"repeat-precision delta={sci(stability)}"
+        ),
+    )
+
+
+def check_basel(pi_g: mp.mpf) -> CheckResult:
+    """Check zeta(2)=pi_g^2/6 using a rapidly convergent positive series.
+
+        zeta(2) = 3 * sum_{n>=1} 1/(n^2 * binom(2n,n)).
+
+    The term ratio is n^2/((2n+2)(2n+1)) < 1/4, so the omitted zeta tail
+    after n=N is smaller than 4 times the first omitted unscaled term.
+    """
+
+    terms = 120
+    term = mp.mpf(1) / 2  # n=1
+    partial_unscaled = mp.mpf(0)
+
+    for n in range(1, terms + 1):
+        partial_unscaled += term
+        term *= mp.mpf(n * n) / ((2 * n + 2) * (2 * n + 1))
+
+    partial = 3 * partial_unscaled
+    tail_bound = 4 * term
+    roundoff = mp.power(10, -(mp.dps - 15))
+    residual = abs((pi_g * pi_g) / 6 - partial)
+    allowance = tail_bound + roundoff
+
+    return CheckResult(
+        identifier="B2",
+        name="Basel identity",
+        domain="Number theory",
+        method="central-binomial zeta(2) series with geometric ratio tail bound",
+        observed_metric_name="abs(pi_g^2/6 - accelerated partial sum)",
+        observed_metric=residual,
+        acceptance_bound=allowance,
+        passed=residual <= allowance,
+        details=f"terms={terms}; explicit tail<={sci(tail_bound)}",
+    )
+
+
+def check_leibniz(pi_g: mp.mpf) -> CheckResult:
+    """Check pi_g/4 using the Euler-transformed Gregory-Leibniz series.
+
+    If I_0=1 and I_{k+1}=2(k+1)I_k/(2k+3), then
+
+        pi/4 = sum_{k>=0} I_k/2^(k+1).
+
+    Consecutive transformed terms have ratio (k+1)/(2k+3)<1/2, so the
+    omitted tail is smaller than twice the first omitted term.
+    """
+
+    terms = 230
+    term = mp.mpf(1) / 2
+    partial = mp.mpf(0)
+
+    for k in range(terms):
+        partial += term
+        term *= mp.mpf(k + 1) / (2 * k + 3)
+
+    tail_bound = 2 * term
+    roundoff = mp.power(10, -(mp.dps - 15))
+    residual = abs(pi_g / 4 - partial)
+    allowance = tail_bound + roundoff
+
+    return CheckResult(
+        identifier="L3",
+        name="Gregory-Leibniz identity",
+        domain="Series",
+        method="Euler-transformed alternating series with explicit ratio tail bound",
+        observed_metric_name="abs(pi_g/4 - transformed partial sum)",
+        observed_metric=residual,
+        acceptance_bound=allowance,
+        passed=residual <= allowance,
+        details=f"transformed terms={terms}; explicit tail<={sci(tail_bound)}",
+    )
+
+
+def check_wallis(pi_g: mp.mpf) -> CheckResult:
+    """Check pi_g/2 against standard finite Wallis bounds.
+
+        W_N < pi/2 < W_N * (2N+1)/(2N).
+    """
+
+    terms = 100_000
+    product = mp.mpf(1)
+    for n in range(1, terms + 1):
+        n_mp = mp.mpf(n)
+        product *= (4 * n_mp * n_mp) / (4 * n_mp * n_mp - 1)
+
+    lower = product
+    upper = product * mp.mpf(2 * terms + 1) / (2 * terms)
+    target = pi_g / 2
+    lower_gap = target - lower
+    upper_gap = upper - target
+    violation = max(mp.mpf(0), -lower_gap, -upper_gap)
+    roundoff = mp.power(10, -(mp.dps - 15))
+
+    return CheckResult(
+        identifier="W4",
+        name="Wallis product",
+        domain="Infinite products",
+        method="standard two-sided finite Wallis enclosure",
+        observed_metric_name="interval violation",
+        observed_metric=violation,
+        acceptance_bound=roundoff,
+        passed=(lower_gap >= 0 and upper_gap >= 0),
+        details=(
+            f"terms={terms}; enclosure width={sci(upper-lower)}; "
+            f"lower gap={sci(lower_gap)}; upper gap={sci(upper_gap)}"
+        ),
+    )
+
+
+def check_stirling_robbins(pi_g: mp.mpf) -> CheckResult:
+    """Check exact factorials against Robbins' sharpened Stirling bounds."""
+
+    test_values = (10, 100, 1000, 10_000)
+    minimum_margin = mp.inf
+    worst_n = None
+    violations: list[mp.mpf] = []
+
+    for n in test_values:
+        log_factorial = mp.fsum(mp.log(k) for k in range(1, n + 1))
+        base = mp.mpf("0.5") * mp.log(2 * pi_g * n) + n * (mp.log(n) - 1)
+        lower = base + mp.mpf(1) / (12 * n + 1)
+        upper = base + mp.mpf(1) / (12 * n)
+        margin = min(log_factorial - lower, upper - log_factorial)
+        violation = max(mp.mpf(0), -margin)
+        violations.append(violation)
+        if margin < minimum_margin:
+            minimum_margin = margin
+            worst_n = n
+
+    maximum_violation = max(violations)
+    roundoff = mp.power(10, -(mp.dps - 15))
+
+    return CheckResult(
+        identifier="S5",
+        name="Robbins-Stirling bounds",
+        domain="Asymptotics / combinatorics",
+        method="exact log-factorial sum tested inside Robbins' two-sided bounds",
+        observed_metric_name="maximum bound violation",
+        observed_metric=maximum_violation,
+        acceptance_bound=roundoff,
+        passed=maximum_violation == 0,
+        details=(
+            f"n={list(test_values)}; smallest positive log-margin={sci(minimum_margin)} "
+            f"at n={worst_n}"
+        ),
+    )
+
+
+def check_gamma_half(pi_g: mp.mpf) -> CheckResult:
+    residual = abs(mp.gamma(mp.mpf("0.5")) ** 2 - pi_g)
+    return CheckResult(
+        identifier="H6",
+        name="Gamma at one half",
+        domain="Special functions",
+        method="direct residual gamma(1/2)^2 - pi_g",
+        observed_metric_name="abs(gamma(1/2)^2 - pi_g)",
+        observed_metric=residual,
+        acceptance_bound=mp.mpf(DIRECT_RESIDUAL_TOLERANCE_TEXT),
+        passed=residual <= mp.mpf(DIRECT_RESIDUAL_TOLERANCE_TEXT),
+        details="library-level cross-check; not claimed to be algorithmically independent of pi",
+    )
+
+
+def check_euler_identity(pi_g: mp.mpf) -> CheckResult:
+    residual = abs(mp.exp(mp.j * pi_g) + 1)
+    return CheckResult(
+        identifier="E7",
+        name="Euler identity",
+        domain="Complex analysis",
+        method="direct complex residual exp(i*pi_g)+1",
+        observed_metric_name="abs(exp(i*pi_g)+1)",
+        observed_metric=residual,
+        acceptance_bound=mp.mpf(DIRECT_RESIDUAL_TOLERANCE_TEXT),
+        passed=residual <= mp.mpf(DIRECT_RESIDUAL_TOLERANCE_TEXT),
+        details="no classical pi appears in the tested expression",
+    )
+
+
+def check_reflection_formula(pi_g: mp.mpf) -> CheckResult:
+    points = (mp.mpf(1) / 3, mp.mpf(2) / 5, mp.mpf(1) / 7)
+    maximum_normalized_residual = mp.mpf(0)
+    worst_point = None
+
+    for z in points:
+        lhs = mp.gamma(z) * mp.gamma(1 - z)
+        rhs = pi_g / mp.sin(pi_g * z)
+        normalized = abs(lhs - rhs) / max(mp.mpf(1), abs(lhs), abs(rhs))
+        if normalized > maximum_normalized_residual:
+            maximum_normalized_residual = normalized
+            worst_point = z
+
+    return CheckResult(
+        identifier="R8",
+        name="Euler reflection formula",
+        domain="Complex analysis / special functions",
+        method="direct normalized residual at three rational arguments",
+        observed_metric_name="maximum normalized reflection residual",
+        observed_metric=maximum_normalized_residual,
+        acceptance_bound=mp.mpf(DIRECT_RESIDUAL_TOLERANCE_TEXT),
+        passed=maximum_normalized_residual <= mp.mpf(DIRECT_RESIDUAL_TOLERANCE_TEXT),
+        details=f"z in {{1/3, 2/5, 1/7}}; worst z={mp.nstr(worst_point, 12)}",
+    )
+
+
+
+def check_richardson_enclosure(
+    certificate: RichardsonCertificate,
+) -> CheckResult:
+    """Rigorous R9 enclosure for the production Richardson value.
+
+    The certificate is computed with exact rational arithmetic.  It combines
+    (i) the distance between the finite mpmath production value and the exact
+    interval-propagated tableau, and (ii) an analytic Taylor-remainder bound
+    for the exact polygon tableau, using only the rational inequality pi<22/7.
+    """
+
+    production_bound = fraction_to_mpf(
+        certificate.production_to_exact_tableau_bound
+    )
+    analytic_bound = fraction_to_mpf(
+        certificate.analytic_tableau_to_pi_bound
+    )
+    total_bound = fraction_to_mpf(certificate.total_pi_error_bound)
+    target = mp.mpf(CERTIFIED_ABSOLUTE_ERROR_TARGET_TEXT)
+
+    return CheckResult(
+        identifier="R9",
+        name="Certified Richardson enclosure",
+        domain="Approximation theory / exact arithmetic",
+        method=(
+            "exact rational cubic interval propagation, exact Richardson weights, "
+            "and analytic sine remainder with pi<22/7"
+        ),
+        observed_metric_name="certified abs(production pi_g - pi) upper bound",
+        observed_metric=total_bound,
+        acceptance_bound=target,
+        passed=(total_bound < target and certificate.production_value_inside_tableau_interval),
+        details=(
+            f"analytic tableau bound={sci(analytic_bound, 24)}; "
+            f"production/tableau bound={sci(production_bound, 24)}; "
+            f"bisection bits={certificate.bisection_bits}; production inside exact tableau interval={certificate.production_value_inside_tableau_interval}; "
+            f"certified absolute decimal places={certificate.certified_decimal_places}"
+        ),
+    )
+
+
+def write_csv(path: Path, checks: Iterable[CheckResult]) -> None:
+    fieldnames = [
+        "identifier",
+        "name",
+        "domain",
+        "method",
+        "observed_metric_name",
+        "observed_metric",
+        "acceptance_bound",
+        "passed",
+        "details",
+    ]
+    with path.open("w", newline="", encoding="utf-8") as handle:
+        writer = csv.DictWriter(handle, fieldnames=fieldnames)
+        writer.writeheader()
+        for check in checks:
+            writer.writerow(
+                {
+                    "identifier": check.identifier,
+                    "name": check.name,
+                    "domain": check.domain,
+                    "method": check.method,
+                    "observed_metric_name": check.observed_metric_name,
+                    "observed_metric": sci(check.observed_metric, 30),
+                    "acceptance_bound": sci(check.acceptance_bound, 30),
+                    "passed": check.passed,
+                    "details": check.details,
+                }
+            )
+
+
+def build_output_text(
+    construction: PiGConstructionResult,
+    certificate: RichardsonCertificate,
+    checks: list[CheckResult],
+    reference_error: mp.mpf,
+    overall_verdict: str,
+) -> str:
+    lines: list[str] = []
+    emit = lines.append
+
+    emit("CERTIFIED PI_G CONSTRUCTION AND CROSS-DOMAIN VERIFICATION SUITE")
+    emit("=" * 72)
+    emit(f"working precision: {construction.work_dps} decimal digits")
+    emit(
+        f"construction inputs: L=0,...,{construction.maximum_level} "
+        f"({construction.level_count} polygon values)"
+    )
+    emit("construction selection: final N-series value, deterministic, no pi oracle")
+    emit(f"pi_g: {dec(construction.value, 90)}")
+    emit(f"reference pi: {dec(mp.pi, 90)}")
+    emit(f"diagnostic abs(pi_g-pi): {sci(reference_error, 30)}")
+    emit(
+        "internal last-diagonal delta (diagnostic only): "
+        + sci(construction.internal_last_diagonal_delta, 30)
+    )
+    emit(
+        "R9 analytic tableau-to-pi bound: "
+        + sci(fraction_to_mpf(certificate.analytic_tableau_to_pi_bound), 30)
+    )
+    emit(
+        "R9 production-to-exact-tableau bound: "
+        + sci(fraction_to_mpf(certificate.production_to_exact_tableau_bound), 30)
+    )
+    emit(
+        "R9 total certified abs(pi_g-pi) bound: "
+        + sci(fraction_to_mpf(certificate.total_pi_error_bound), 30)
+    )
+    emit(
+        "R9 certified absolute decimal places: "
+        + str(certificate.certified_decimal_places)
+    )
+    emit("maximum cubic root bracket width: " + sci(construction.maximum_root_bracket_width, 30))
+    emit(
+        "maximum cubic midpoint polynomial residual: "
+        + sci(construction.maximum_root_polynomial_residual, 30)
+    )
+    emit("")
+    emit("DIRECT CHECK RESULTS")
+    emit("-" * 72)
+    for check in checks:
+        emit(
+            f"{check.identifier} {check.name}: "
+            f"observed={sci(check.observed_metric, 24)}; "
+            f"bound={sci(check.acceptance_bound, 24)}; "
+            f"status={'PASS' if check.passed else 'FAIL'}"
+        )
+        emit(f"    method: {check.method}")
+        emit(f"    details: {check.details}")
+    emit("")
+    emit(f"checks passed: {sum(c.passed for c in checks)}/{len(checks)}")
+    emit(f"overall_verdict: {overall_verdict}")
+    emit("")
+    emit("CLAIM BOUNDARY")
+    emit("-" * 72)
+    emit(
+        "R9 is a rigorous finite-value enclosure derived without a numerical pi oracle. "
+        "The exact limiting sequence is identified with the classical inscribed-polygon "
+        "sequence by the triple-angle theorem. Checks H6, E7, and R8 remain library-level "
+        "consistency checks and are not claimed to be algorithmically independent."
+    )
+    return "\n".join(lines) + "\n"
+
+
+def parse_args() -> argparse.Namespace:
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument("--output-dir", default="pi_g_verification_output")
+    parser.add_argument("--work-dps", type=int, default=DEFAULT_WORK_DPS)
+    parser.add_argument("--level-count", type=int, default=DEFAULT_LEVEL_COUNT)
+    parser.add_argument("--certificate-bits", type=int, default=DEFAULT_CERTIFICATE_BITS)
+    return parser.parse_args()
+
+
+def main() -> None:
+    args = parse_args()
+    output_dir = Path(args.output_dir).resolve()
+    output_dir.mkdir(parents=True, exist_ok=True)
+
+    mp.dps = args.work_dps
+    construction = compute_pi_g(level_count=args.level_count, work_dps=args.work_dps)
+    certificate = build_richardson_certificate(
+        production_value=construction.value,
+        level_count=args.level_count,
+        bisection_bits=args.certificate_bits,
+    )
+
+    # This comparison is performed only after pi_g has been constructed and fixed.
+    reference_error = abs(construction.value - mp.pi)
+
+    checks = [
+        check_richardson_enclosure(certificate),
+        check_gaussian_integral(construction.value, args.work_dps),
+        check_basel(construction.value),
+        check_leibniz(construction.value),
+        check_wallis(construction.value),
+        check_stirling_robbins(construction.value),
+        check_gamma_half(construction.value),
+        check_euler_identity(construction.value),
+        check_reflection_formula(construction.value),
+    ]
+
+    all_pass = all(check.passed for check in checks)
+    overall_verdict = (
+        "PI_G_CERTIFIED_CONSTRUCTION_AND_CONSISTENCY_CHECKS_PASS"
+        if all_pass
+        else "PI_G_CERTIFIED_CONSTRUCTION_AND_CONSISTENCY_CHECKS_FAIL"
+    )
+
+    csv_path = output_dir / "pi_g_verification_results.csv"
+    output_path = output_dir / "pi_g_verification_output.txt"
+    summary_path = output_dir / "pi_g_verification_summary.txt"
+    manifest_path = output_dir / "pi_g_verification_manifest.json"
+
+    write_csv(csv_path, checks)
+    output_text = build_output_text(construction, certificate, checks, reference_error, overall_verdict)
+    output_path.write_text(output_text, encoding="utf-8")
+
+    summary_lines = [
+        "Baker pi_g certified construction and verification summary",
+        "=" * 58,
+        f"checks_passed: {sum(c.passed for c in checks)}/{len(checks)}",
+        f"working_precision_decimal_digits: {args.work_dps}",
+        f"level_count: {args.level_count}",
+        f"maximum_level: {args.level_count - 1}",
+        f"diagnostic_abs_pi_g_minus_pi: {sci(reference_error, 30)}",
+        "internal_last_diagonal_delta_diagnostic: " + sci(construction.internal_last_diagonal_delta, 30),
+        "r9_analytic_tableau_to_pi_bound: " + sci(fraction_to_mpf(certificate.analytic_tableau_to_pi_bound), 30),
+        "r9_production_to_exact_tableau_bound: " + sci(fraction_to_mpf(certificate.production_to_exact_tableau_bound), 30),
+        "r9_total_certified_abs_error_bound: " + sci(fraction_to_mpf(certificate.total_pi_error_bound), 30),
+        f"r9_certified_absolute_decimal_places: {certificate.certified_decimal_places}",
+        f"overall_verdict: {overall_verdict}",
+        "claim_boundary: R9 is rigorous; H6, E7, and R8 are library-level consistency checks.",
+    ]
+    summary_path.write_text("\n".join(summary_lines) + "\n", encoding="utf-8")
+
+    script_dir = Path(__file__).resolve().parent
+    construction_script = script_dir / "pi_g_construction.py"
+    verification_script = Path(__file__).resolve()
+
+    manifest = {
+        "title": "Certified algebraic construction and cross-domain checks for Baker's pi_g",
+        "working_precision_decimal_digits": args.work_dps,
+        "level_count": args.level_count,
+        "maximum_level": args.level_count - 1,
+        "pi_g_decimal": dec(construction.value, 100),
+        "reference_pi_decimal": dec(mp.pi, 100),
+        "diagnostic_abs_pi_g_minus_pi": sci(reference_error, 40),
+        "internal_last_diagonal_delta_diagnostic": sci(construction.internal_last_diagonal_delta, 40),
+        "r9_certificate": {
+            "bisection_bits": certificate.bisection_bits,
+            "production_inside_exact_tableau_interval": certificate.production_value_inside_tableau_interval,
+            "analytic_tableau_to_pi_bound": sci(fraction_to_mpf(certificate.analytic_tableau_to_pi_bound), 50),
+            "production_to_exact_tableau_bound": sci(fraction_to_mpf(certificate.production_to_exact_tableau_bound), 50),
+            "total_certified_abs_error_bound": sci(fraction_to_mpf(certificate.total_pi_error_bound), 50),
+            "certified_absolute_decimal_places": certificate.certified_decimal_places,
+            "acceptance_target": CERTIFIED_ABSOLUTE_ERROR_TARGET_TEXT,
+        },
+        "maximum_root_bracket_width": sci(construction.maximum_root_bracket_width, 40),
+        "maximum_root_polynomial_residual": sci(
+            construction.maximum_root_polynomial_residual, 40
+        ),
+        "software_requirements": {
+            "python": ">=3.10",
+            "mpmath": "==1.3.0",
+        },
+        "checks": [
+            {
+                **{
+                    key: value
+                    for key, value in asdict(check).items()
+                    if key not in {"observed_metric", "acceptance_bound"}
+                },
+                "observed_metric": sci(check.observed_metric, 40),
+                "acceptance_bound": sci(check.acceptance_bound, 40),
+            }
+            for check in checks
+        ],
+        "all_checks_pass": all_pass,
+        "overall_verdict": overall_verdict,
+        "claim_boundary": (
+            "R9 rigorously encloses the finite constructed value using exact rational intervals "
+            "and an analytic remainder. H6, E7, and R8 are not asserted to be "
+            "implementation-independent."
+        ),
+        "sha256": {
+            "pi_g_construction.py": sha256_file(construction_script),
+            "certified_richardson.py": sha256_file(script_dir / "certified_richardson.py"),
+            "verify_pi_g_identities.py": sha256_file(verification_script),
+            "pi_g_verification_results.csv": sha256_file(csv_path),
+            "pi_g_verification_output.txt": sha256_file(output_path),
+            "pi_g_verification_summary.txt": sha256_file(summary_path),
+        },
+    }
+    manifest_path.write_text(json.dumps(manifest, indent=2), encoding="utf-8")
+
+    print(output_text, end="")
+    print(f"output_dir: {output_dir}")
+    print(f"manifest_sha256: {sha256_file(manifest_path)}")
+
+    if not all_pass:
+        raise SystemExit(1)
+
+
+if __name__ == "__main__":
+    main()
+\end{lstlisting}
+
+\begin{lstlisting}[style=outputstyle,caption={Canonical Version 3.0 output}]
+CERTIFIED PI_G CONSTRUCTION AND CROSS-DOMAIN VERIFICATION SUITE
+========================================================================
+working precision: 120 decimal digits
+construction inputs: L=0,...,10 (11 polygon values)
+construction selection: final N-series value, deterministic, no pi oracle
+pi_g: 3.14159265358979323846264338327950288419716939937510582097494459230781640628620899600343013
+reference pi: 3.14159265358979323846264338327950288419716939937510582097494459230781640628620899862803483
+diagnostic abs(pi_g-pi): 2.62460469419605053323428123545e-81
+internal last-diagonal delta (diagnostic only): 1.68888783015368936452420728675e-68
+R9 analytic tableau-to-pi bound: 3.40628574228490541814212188769e-81
+R9 production-to-exact-tableau bound: 1.60292123843046314126834219505e-89
+R9 total certified abs(pi_g-pi) bound: 3.40628575831411780244675330038e-81
+R9 certified absolute decimal places: 80
+maximum cubic root bracket width: 9.96319669471211514494456752278e-101
+maximum cubic midpoint polynomial residual: 1.40735005136297493732277918456e-100
+
+DIRECT CHECK RESULTS
+------------------------------------------------------------------------
+R9 Certified Richardson enclosure: observed=3.40628575831411780244675e-81; bound=1.0e-80; status=PASS
+    method: exact rational cubic interval propagation, exact Richardson weights, and analytic sine remainder with pi<22/7
+    details: analytic tableau bound=3.40628574228490541814212e-81; production/tableau bound=1.60292123843046314126834e-89; bisection bits=300; production inside exact tableau interval=True; certified absolute decimal places=80
+G1 Gaussian integral: observed=3.08328432228254275714216e-75; bound=3.0923540121102732675618e-75; status=PASS
+    method: finite quadrature, analytic two-sided tail bound, repeat-precision stability check
+    details: cutoff A=13; analytic tail<=3.09235401211027327e-75; repeat-precision delta=0
+B2 Basel identity: observed=7.51408052627265554783788e-76; bound=7.54477984299203220764411e-76; status=PASS
+    method: central-binomial zeta(2) series with geometric ratio tail bound
+    details: terms=120; explicit tail<=7.54477984299203221e-76
+L3 Gregory-Leibniz identity: observed=3.37397562623067428997941e-71; bound=3.38123188466223775250077e-71; status=PASS
+    method: Euler-transformed alternating series with explicit ratio tail bound
+    details: transformed terms=230; explicit tail<=3.38123188466223775e-71
+W4 Wallis product: observed=0; bound=1.0e-105; status=PASS
+    method: standard two-sided finite Wallis enclosure
+    details: terms=100000; enclosure width=7.85396199914311595e-6; lower gap=3.92696627342962505e-6; upper gap=3.9269957257134909e-6
+S5 Robbins-Stirling bounds: observed=0; bound=1.0e-105; status=PASS
+    method: exact log-factorial sum tested inside Robbins' two-sided bounds
+    details: n=[10, 100, 1000, 10000]; smallest positive log-margin=2.7777777698412699e-15 at n=10000
+H6 Gamma at one half: observed=2.62460469419605053323428e-81; bound=1.0e-65; status=PASS
+    method: direct residual gamma(1/2)^2 - pi_g
+    details: library-level cross-check; not claimed to be algorithmically independent of pi
+E7 Euler identity: observed=2.62460469419605053323428e-81; bound=1.0e-65; status=PASS
+    method: direct complex residual exp(i*pi_g)+1
+    details: no classical pi appears in the tested expression
+R8 Euler reflection formula: observed=4.94323317499131269913202e-82; bound=1.0e-65; status=PASS
+    method: direct normalized residual at three rational arguments
+    details: z in {1/3, 2/5, 1/7}; worst z=0.4
+
+checks passed: 9/9
+overall_verdict: PI_G_CERTIFIED_CONSTRUCTION_AND_CONSISTENCY_CHECKS_PASS
+
+CLAIM BOUNDARY
+------------------------------------------------------------------------
+R9 is a rigorous finite-value enclosure derived without a numerical pi oracle. The exact limiting sequence is identified with the classical inscribed-polygon sequence by the triple-angle theorem. Checks H6, E7, and R8 remain library-level consistency checks and are not claimed to be algorithmically independent.
+\end{lstlisting}
+
+\end{document}
