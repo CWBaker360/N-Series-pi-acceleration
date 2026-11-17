@@ -20,6 +20,12 @@ This repository contains the paper, LaTeX source, and supporting Python scripts 
 - [LaTeX source](paper/nseries_pi_acceleration.tex)
 - [Latest release](https://github.com/CWBaker360/N-Series-pi-acceleration/releases/latest)
 
+## Lean 4 formal verification
+
+The mathematical core has a [separate Lean 4/Mathlib companion repository](https://github.com/CWBaker360/nseries-lean-verification). Its pinned A–E10 development reports a successful 28-module build and a 112-declaration axiom audit (standard axioms only; no reported `sorryAx`). A later seven-module constructible-ladder checkpoint and Proposition 4.6 have **separate** local verification evidence and must not be conflated with that earlier audit.
+
+See [verification scope, pinned source, and evidence links](verification/README.md). The original PDF and LaTeX in this repository have **not yet** been replaced by the later corrected manuscript. This main-branch documentation update does not create a GitHub release or modify the existing Zenodo archive.
+
 ## Main result
 
 For the polygonal half-perimeter sequence
